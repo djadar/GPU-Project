@@ -81,8 +81,8 @@ int main() {
     std::cout << "Kernel" << std::endl;
     print_array(kernel);
 
-    int total = 0;
-    int elem = 0;
+    float total = 0;
+    float elem = 0;
     // Go through each pixel in the original array
     for (int i = 0; i < out.size(); i++) {
         for (int j = 0; j < out[0].size(); j++) {
