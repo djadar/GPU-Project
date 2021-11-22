@@ -1,15 +1,41 @@
 #include <iostream>
 #include <math.h>
 #include <vector>
+//#include <opencv2/opencv.hpp>
 
-#define vec1d std::vector<int>
-#define vec2d std::vector<std::vector<int>>
+#define vec1di std::vector<int>
+#define vec2di std::vector<std::vector<int>>
+#define vec1df std::vector<float>
+#define vec2df std::vector<std::vector<float>>
 
-vec2d array_padding(int k, const vec2d &array) {
+// Create sobel filter with size k x k
+vec2df sobel_filter(int k) {
+    vec2df out(k);
+    float v, x_dist, y_dist;
+    for (int i = 0; i < k; i++) {
+        vec1df row(k);
+        for (int j = 0; j < k; j++) {
+            if (j == floor(k/2)){
+                v = 0;
+            }
+            else {
+                y_dist = (i - floor(k/2));
+                x_dist = (j - floor(k/2));
+                v = x_dist / (x_dist * x_dist + y_dist * y_dist);
+            }
+            row[j] = v;
+        }
+        out[i] = row;
+    }
+    return out;
+}
+
+// Create padded input vector padded by k pixels
+vec2di array_padding(int k, const vec2di &array) {
     size_t out_size = array.size() + 2*k;
-    vec2d out(out_size);
+    vec2di out(out_size);
     for (int r = 0; r < out_size; r++) {
-        vec1d row(array.size() + 2*k, 0);
+        vec1di row(array.size() + 2*k, 0);
         if ((r > k) && (r < array.size() + k)) {
             for (int x = 0; x < array[0].size(); x++ ) {
                 row[x+k] = array[r-k][x];
@@ -20,15 +46,40 @@ vec2d array_padding(int k, const vec2d &array) {
     return out;
 }
 
-int main() {
-    vec2d array = {{0, 1, 2, 3, 4}, {0, 1, 2, 3, 4}, {5, 2, 5, 2, 0}, {5, 2, 5, 2, 0}, {5, 2, 5, 2, 0}};
-    vec2d kernel = {{1, 0, -1}, {2, 0, -2}, {1, 0, -1}};;
-    vec2d out = array;
-    
-    int kernel_size = 3; // hard coded for now
-    int k = floor(kernel_size / 2);
+void print_array(const vec2di &X) {
+    for (int i = 0; i < X.size(); i++) {
+        std::cout << "[";
+        for (int j = 0; j < X[0].size(); j++) {
+            std::cout << X[i][j] << ", ";
+        }
+        std::cout << "]" << std::endl;
+    }
+    std::cout << std::endl;
+}
 
+void print_array(const vec2df &X) {
+    for (int i = 0; i < X.size(); i++) {
+        std::cout << "[";
+        for (int j = 0; j < X[0].size(); j++) {
+            std::cout << X[i][j] << ", ";
+        }
+        std::cout << "]" << std::endl;
+    }
+    std::cout << std::endl;
+}
+
+// TODO: Add arguments (image path, kernel size)
+int main() {
+    int kernel_size = 3;
+    int k = floor(kernel_size / 2);
+    // TODO: Replace with opening an image with opencv
+    vec2di array = {{0, 1, 2, 3, 4}, {0, 1, 2, 3, 4}, {5, 2, 5, 2, 0}, {5, 2, 5, 2, 0}, {5, 2, 5, 2, 0}};
+    vec2di out = array;
     array = array_padding(k, array);
+    
+    vec2df kernel = sobel_filter(kernel_size);
+    std::cout << "Kernel" << std::endl;
+    print_array(kernel);
 
     int total = 0;
     int elem = 0;
@@ -46,14 +97,9 @@ int main() {
             out[i][j] = total;
         }
     }
+    // TODO: Replace with visualizing image with opencv
     std::cout << "Output array" << std::endl;
-    for (int i = 0; i < out.size(); i++) {
-        std::cout << "[";
-        for (int j = 0; j < out[0].size(); j++) {
-            std::cout << out[i][j] << ", ";
-        }
-        std::cout << "]" << std::endl;
-    }
-    std::cout << std::endl;
+    print_array(out);
+
     return 0;
 }
