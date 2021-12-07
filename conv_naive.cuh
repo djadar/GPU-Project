@@ -1,5 +1,5 @@
 __global__ void
-filter_function( float* output, float* array, float* kernel, int k, int width)
+conv_naive( float* output, float* array, float* kernel, int k, int width)
 {
   /* Naive function for calculating convolution between array and 
   * 2D kernel. In future requires tiling the image and the kernel 
