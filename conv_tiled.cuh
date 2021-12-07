@@ -44,7 +44,7 @@ conv_tiled( float* C, float* A, float* B, int wA, int hA. int wB)
     // Calculate convolution. Separated to x and y for easier understanding
     for (int kx = 0; kx < wB; kx++) {
       for (int ky = 0; ky < wB; ky++) {
-        accu += subtileA[tx - (kx - pad)][ty - (ky - pad)];
+        accu += subtileA[ty - (ky - pad)][tx - (kx - pad)] * B[ky * wB + kx];
       }
     }
     // Copy result to output array (again keep only padded area)
