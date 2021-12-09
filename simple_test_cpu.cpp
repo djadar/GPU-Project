@@ -60,7 +60,7 @@ int main() {
     int kernel_size = 3;
     int k = floor(kernel_size / 2);
     // TODO: Replace with opening an image with opencv
-    vec2df array = {{0, 1, 2, 3, 4}, {0, 1, 2, 3, 4}, {5, 2, 5, 2, 0}, {5, 2, 5, 2, 0}, {5, 2, 5, 2, 0}};
+    vec2df array = {{1, 1, 1, 1, 1}, {1, 1, 1, 1, 1}, {1, 1, 1, 1, 1}, {1, 1, 1, 1, 1}, {1, 1, 1, 1, 1}};
     vec2df out = array;
     array = array_padding(k, array);
     

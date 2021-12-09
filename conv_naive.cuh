@@ -16,17 +16,20 @@ conv_naive( float* output, float* array, float* kernel, int k, int width)
   int row = blockIdx.y * blockDim.y + threadIdx.y;
   int col = blockIdx.x * blockDim.x + threadIdx.x;
 
+  // if ((row > 1) && (row < width) && (col > 1) && (col < width)) {
   float accu = 0.0;
   // Go through each element in the filter kernel
   for(int r=0; r<k; r++){
     for(int c=0; c<k; c++){
         // start from (row-k, col-k) position and move through the
         // elements in the kernel
-        accu = accu + array[(row - r - k)*width + (c - k)] * kernel[r*k + c]:
+        accu = accu + array[(row - (k - r))*width + col - (k - c)] * kernel[r*k + c] + 1;
       }
   }
   // each thread writes one element to output matrix
-  output[ row * width + col ] = accu;
-
+  if ((row > 1) && (row < width) && (col > 1) && (col < width)) {
+    //output[ row * width + col ] = accu;
+    output[ row * width + col ] = 1.0;
+  }
 }
 

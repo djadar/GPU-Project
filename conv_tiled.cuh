@@ -1,7 +1,7 @@
 #define TW 16
 
 __global__ void
-conv_tiled( float* C, float* A, float* B, int wA, int hA. int wB)
+conv_tiled( float* C, float* A, float* B, int wA, int hA, int wB)
 {
   /*
   Function that calculates the convolution between an array A and filter B.
@@ -15,6 +15,9 @@ conv_tiled( float* C, float* A, float* B, int wA, int hA. int wB)
     - wB    Width of B
 
   */
+
+  // kernel to shared memory
+  // Faster: some threads load 2 all threads calculate
 
   // Shared tile
   __shared__ float subTileA[TW][TW];
@@ -31,9 +34,17 @@ conv_tiled( float* C, float* A, float* B, int wA, int hA. int wB)
   int j = bx * TW + tx;
 
   float accu = 0.0;
-  int pad = std::floor(wB / 2) // Number of padding pixels
+  int pad = 1; //std::floor(wB / 2); // Number of padding pixels
 
-  subTileA[ty][tx] = A[i * wA + j];
+  // First tile row and column start from 0 others start interleaved 'pad' earlier
+  size_t indA;
+  if (i == 0)
+    indA = i * wA + j;
+  else
+    indA = (i - pad) * wA + j;
+  if (j > 0)
+    indA -= pad;
+  subTileA[ty][tx] = A[indA];
 
   // Sync so all data in subtile is present for calculations. Later there is no need 
   // for another synchronisation because the tiles are independent of each other
@@ -44,7 +55,7 @@ conv_tiled( float* C, float* A, float* B, int wA, int hA. int wB)
     // Calculate convolution. Separated to x and y for easier understanding
     for (int kx = 0; kx < wB; kx++) {
       for (int ky = 0; ky < wB; ky++) {
-        accu += subtileA[ty - (ky - pad)][tx - (kx - pad)] * B[ky * wB + kx];
+        accu += subTileA[ty - (ky - pad)][tx - (kx - pad)] * B[ky * wB + kx];
       }
     }
     // Copy result to output array (again keep only padded area)
