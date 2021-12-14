@@ -1,0 +1,2 @@
+- 2N+1 globals memory loads are performed
+- i:2 2 2 *N j:2 2 2 *N others:1*N
