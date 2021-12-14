@@ -35,10 +35,10 @@ typedef float REAL;
 /* Toplevel function.                                                         */
 /*----------------------------------------------------------------------------*/
 int main(int argc, char *argv[]) {
-  std::cout << "[Matrix Multiply Using CPU]" << std::endl;
+  std::cout << "[Matrix Convolution Using CPU]" << std::endl;
 
   // Define parser 
-  args::ArgumentParser parser("gemm_cpu", "Matrix Multiply using CPU");
+  args::ArgumentParser parser("gemm_cpu", "Matrix Convolution using CPU");
 
   // Set parser value
   args::HelpFlag help(parser, "help", "Display this help menu", {'h', "help"});
@@ -46,9 +46,9 @@ int main(int argc, char *argv[]) {
                               256);
   args::ValueFlag<int> heightA(parser, "heightA", "Height of matrix A", {"hA"},
                                256);
-  args::ValueFlag<int> widthB(parser, "widthB", "Width of matrix B", {"wB"},
+  args::ValueFlag<int> widthB(parser, "widthK", "Width of kernel", {"wK"},
                               256);
-  args::ValueFlag<int> heightB(parser, "heightB", "Height of matrix B", {"hB"},
+  args::ValueFlag<int> heightB(parser, "heightK", "Height of kernel", {"hK"},
                                256);
 
   // Invoke parser
