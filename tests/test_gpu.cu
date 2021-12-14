@@ -27,6 +27,23 @@
 #define REAL float
 #define BLOCK_SIZE 1
 
+void sobel_filter(int k, REAL *&A) {
+    float v, x_dist, y_dist;
+    for (int i = 0; i < k; i++) {
+        for (int j = 0; j < k; j++) {
+            if (j == floor(k/2)){
+                v = 0;
+            }
+            else {
+                y_dist = (i - floor(k/2));
+                x_dist = (j - floor(k/2));
+                v = x_dist / (x_dist * x_dist + y_dist * y_dist);
+            }
+            A[i * k + j] = v;
+        }
+    }
+}
+
 void print_array(REAL *&A, int M) {
     std::cout << "[";
     for (int i = 0; i < M*M; i++) {
@@ -45,7 +62,10 @@ void print_array(REAL *&A, int M) {
 int main(int argc, char **argv) {
 
   std::cout << "[Matrix Multiply Using CUDA] - Starting..." << std::endl;
-
+  int k = 5;
+  REAL *kernel(k*k);
+  sobel_filter(k, kernel);
+  print_array(kernel, k);
   // Define parser 
   // args::ArgumentParser parser("gemm_cuda", "Matrix Multiply using CUDA");
 
