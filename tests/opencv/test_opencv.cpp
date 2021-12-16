@@ -80,17 +80,17 @@ int get_image(char* name){
   int total = 0;
   int elem = 0;
 
-  std::cout << "Output array" << std::endl;
+  //std::cout << "Output array" << std::endl;
   REAL *frameArray = new REAL[size];
 
   for (int x = 0; x < numCols; x++) {          // x-axis, cols
     for (int y = 0; y < numRows; y++) {          // y-axis rows
-        double intensity = image.at<uchar>(Point(x, y));
+        double intensity = image.at<uchar>(cv::Point(x, y));
         frameArray[x * numCols + y] = intensity;
     }
   }
 
-  print_array("Input", frameArray, size);
+  print_array("Input", frameArray, numCols);
   //cv::namedWindow( "mes images", cv::WINDOW_AUTOSIZE );
   //cv::imshow( "Initial", image );
   //cv::imshow( "Final", final );
@@ -103,7 +103,7 @@ int main( int argc, char** argv ) {
   
   char* name = "opencv_testimage.jpg";
   char* name2 = "bitmoji.png";
-  int n = get_image(name2);
+  int n = get_image(name);
   
   return n;
 }
