@@ -30,16 +30,6 @@ void sobel_filter(int k, REAL *&A) {
     }
 }
 
-void fillA(REAL *&A, int M) {
-    //REAL array [M*M] = {0, 1, 2, 3, 4, 0, 1, 2, 3, 4, 5, 2, 5, 2, 0, 5, 2, 5, 2, 0, 5, 2, 5, 2, 0};
-    
-    for (int i = 0; i < M; ++i) {
-        for (int j = 0; j < M; ++j) {
-        A[i * M + j] = 1;
-        //array[i * M + j];
-        }
-    }
-}
 
 void print_array(char * name, REAL *&A, int M) {
     std::cout << "Matrix" <<name<<" \n[";
@@ -53,8 +43,37 @@ void print_array(char * name, REAL *&A, int M) {
         
     }
 }
-
-int get_image(char* name){
+void array_padding(REAL *&A, REAL *&B, int pad, int w, int h) {
+    int out_w = w + pad * 2;
+    for (int r = 0; r < h; r++) {
+        for (int c = 0; c < w; c++) {
+            B[(r + pad) * out_w + c + pad] = A[r * w + c];
+        }
+    }
+}
+void conv(){
+    //
+    array_padding(a_nopad, array, pad, 5, 5);
+    //
+    float total = 0;
+    float elem = 0;
+    int w_pad = w + 2 * pad;
+    // Go through each pixel in the original array
+    for (int r = 0; r < h; r++) {
+        for (int c = 0; c < w; c++) {
+            total = 0;
+            // Go through each element in the kernel array
+            for (int x = 0; x < k; x++) {
+                for (int y = 0; y < k; y++) {
+                    elem = array[(r + y) * w_pad + c + x];
+                    total += elem * kernel[x * k + y]; // Add to the total value for the output pixel
+                }
+            }
+            out[r * w + c] = total;
+        }
+    }
+}
+int get_image(char* name, REAL *frameArray ){
 
   cv::Mat image;
   image = cv::imread(name ,1);
@@ -66,11 +85,7 @@ int get_image(char* name){
 
  cv::namedWindow( "mes images", cv::WINDOW_AUTOSIZE );
   cv::imshow( "Initial", image );
-  //produit convolutionnel
-  std::vector<std::vector<int>> kernel = {{1, 0, -1}, {2, 0, -2}, {1, 0, -1}};
-  //std::vector<std::vector<int>> out;
-  //std::vector<int> vect(image.rows-1, 10);
-  //std::vector<std::vector<int>> out(image.cols-1,vect);
+  
 
   int numCols = image.cols;
   int numRows = image.rows;
@@ -81,7 +96,7 @@ int get_image(char* name){
   int elem = 0;
 
   //std::cout << "Output array" << std::endl;
-  REAL *frameArray = new REAL[size];
+  frameArray = new REAL[size];
 
   for (int x = 0; x < numCols; x++) {          // x-axis, cols
     for (int y = 0; y < numRows; y++) {          // y-axis rows
@@ -91,8 +106,9 @@ int get_image(char* name){
   }
 
   print_array("Input", frameArray, numCols);
-  //cv::namedWindow( "mes images", cv::WINDOW_AUTOSIZE );
-  //cv::imshow( "Initial", image );
+  
+  
+  
   //cv::imshow( "Final", final );
   
   cv::waitKey(0);
@@ -103,7 +119,21 @@ int main( int argc, char** argv ) {
   
   char* name = "opencv_testimage.jpg";
   char* name2 = "bitmoji.png";
-  int n = get_image(name);
+  REAL *frameArray ;
+
+  int n = get_image(name, frameArray);
+  
+  //
+  if n>0{
+      //kernel
+    int k = 3;
+    int pad = floor(k / 2);
+    sobel_filter(k, kernel);
+    print_array(kernel, k);
+    //Array
+    REAL *array = 
+    conv()
+  }
   
   return n;
 }
