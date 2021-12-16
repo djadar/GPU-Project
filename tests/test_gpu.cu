@@ -19,13 +19,91 @@
 //#include "matrix_utils.h"
 
 // Define different gemm kernel
-//#include <gemm_kernel.cuh>
-#include <conv_naive.cuh>
-#include <conv_tiled.cuh>
+// #include <gemm_kernel.cuh>
+// #include <conv_naive.cuh>
+// #include <conv_tiled.cuh>
 
+// Define error checking 
+#define gpuErrchk(ans) { gpuAssert((ans), __FILE__, __LINE__); }
+
+/// ----------------------------------------------------------------------------
+/// \fn gpuAssert(cudaError_t code, const char *str, int line, bool abort=true)
+/// @param[in] code (cudaError_t): error code from Cuda
+/// @param[in] file (const char *): name of the file containing the error
+/// @param[in] line (int): line number containing the error
+/// @param[in] abort (bool): force abort on cuda error
+/// ----------------------------------------------------------------------------
+inline void gpuAssert(cudaError_t code, const char *file, int line, bool abort=true)
+{
+  if (code != cudaSuccess) 
+  {
+    std::cerr << "CUDA error: "<< cudaGetErrorString(code)<<" "<< file<<" "<< line<<std::endl;
+    if (abort) exit(code);
+  }
+}
 
 #define REAL float
 #define BLOCK_SIZE 1
+
+
+//   __global__ void
+// conv_naive( float* output, float* array, float* kernel, int k, int width)
+// {
+//   /* Naive function for calculating convolution between array and 
+//   * 2D kernel. In future requires tiling the image and the kernel 
+//   * into smaller pieces before calculating
+//   *
+//   * float* output:   output array
+//   * float* array:    padded input array
+//   * float* kernel:   the filter kernel
+//   * int k:           floor(width(kernel) / 2)
+//   * int width:       width of input array 
+//   */ 
+
+//   // thread indexing
+//   int row = blockIdx.y * blockDim.y + threadIdx.y;
+//   int col = blockIdx.x * blockDim.x + threadIdx.x;
+
+//   output[row * width + col] = row;
+// }
+
+
+__global__ void
+conv_naive( float* output, float* array, float* kernel, int k, int width)
+{
+  /* Naive function for calculating convolution between array and 
+  * 2D kernel. In future requires tiling the image and the kernel 
+  * into smaller pieces before calculating
+  *
+  * float* output:   output array
+  * float* array:    padded input array
+  * float* kernel:   the filter kernel
+  * int k:           floor(width(kernel) / 2)
+  * int width:       width of input array 
+  */ 
+
+  // thread indexing
+  int row = blockIdx.y * blockDim.y + threadIdx.y;
+  int col = blockIdx.x * blockDim.x + threadIdx.x;
+  int w_pad = width + k - 1;
+
+  float accu = 0.0;
+  float elem = 0.0;
+  int test = 5;
+  // Go through each element in the filter kernel
+  for(int x=0; x<k; x++){
+    for(int y=0; y<k; y++){
+        // start from (row-k, col-k) position and move through the
+        // elements in the kernel
+        accu += array[(row + y) * w_pad + col + x] * kernel[x * k + y];
+
+        // Debugging
+        // if ((row == 0) && (col == 0))
+        //   printf("%f * %f = %f\n", array[(row + y) * w_pad + col + x], kernel[x * k + y], array[(row + y) * w_pad + col + x] * kernel[x * k + y]);
+      }
+  }
+  output[row * width + col] = accu;
+}
 
 void sobel_filter(int k, REAL *&A) {
     float v, x_dist, y_dist;
@@ -62,8 +140,8 @@ void print_array(REAL *&A, int M) {
 int main(int argc, char **argv) {
 
   std::cout << "[Matrix Multiply Using CUDA] - Starting..." << std::endl;
-  int k = 5;
-  REAL *kernel(k*k);
+  int k = 3;
+  REAL *kernel = new REAL[k*k];
   sobel_filter(k, kernel);
   print_array(kernel, k);
   // Define parser 
@@ -100,12 +178,14 @@ int main(int argc, char **argv) {
   // int HB = args::get(heightB);
   //int BS = args::get(blockSize);
 
+
+
   int WA = 5;
-  int WB = 5;
-  int HA = 3;
+  int WB = 3;
+  int HA = 5;
   int HB = 3;
   int WC = WA;
-  int HC = HB;
+  int HC = HA;
 
   // Setup CUDA environnement 
   cudaError_t error;
@@ -164,7 +244,7 @@ int main(int argc, char **argv) {
                     0,0,0,0,0,0,0};
 
   float BB [3*3] = {-0.5, 0.0, 0.5, 
-                    -1.0, 0.0, -1.0,
+                    -1.0, 0.0, 1.0,
                     -0.5, 0.0, 0.5};
   h_A = AA;
   h_B = BB;
@@ -172,22 +252,22 @@ int main(int argc, char **argv) {
 
   // allocate device memory
   float *d_A;
-  cudaMalloc((void **)&d_A, mem_size_A);
+  gpuErrchk(cudaMalloc((void **)&d_A, mem_size_A));
   float *d_B;
-  cudaMalloc((void **)&d_B, mem_size_B);
+  gpuErrchk(cudaMalloc((void **)&d_B, mem_size_B));
 
 
   // allocate device memory for result
-  unsigned int size_C = WA * HB;
+  unsigned int size_C = WC * HC;
 
 
 
   unsigned int mem_size_C = sizeof(float) * size_C;
   float *d_C;
-  cudaMalloc((void **)&d_C, mem_size_C);
+  gpuErrchk(cudaMalloc((void **)&d_C, mem_size_C));
 
   // allocate host memory for the result
-  float *h_C = (float *)malloc(mem_size_C);
+  float *h_C = new float[25];//(float *)malloc(mem_size_C);
 
   dim3 threads, grid;
 
@@ -196,23 +276,24 @@ int main(int argc, char **argv) {
   cudaEventRecord(start, NULL);
  
   // copy host memory to device
-  cudaMemcpy(d_A, h_A, mem_size_A, cudaMemcpyHostToDevice);
-  cudaMemcpy(d_B, h_B, mem_size_B, cudaMemcpyHostToDevice);
+  gpuErrchk(cudaMemcpy(d_A, h_A, mem_size_A, cudaMemcpyHostToDevice));
+  gpuErrchk(cudaMemcpy(d_B, h_B, mem_size_B, cudaMemcpyHostToDevice));
 
   // setup execution parameters
   // threads = dim3(BS, BS);
-  threads=dim3(BLOCK_SIZE, BLOCK_SIZE);
-  grid = dim3(WC / threads.x, HC / threads.y);
+  // threads=dim3(BLOCK_SIZE, BLOCK_SIZE);
+  // grid = dim3(WC / threads.x, HC / threads.y);
+  threads = dim3(5, 5);
+  grid = dim3(1);
   
   // execute the kernel
-  //gemm_naive<<<grid, threads>>>(d_C, d_A, d_B, WA, WB);
-  // conv_naive<<<grid, threads>>>(d_C, d_A, d_B, 3, 7);
-  conv_naive<<<1, 5>>>(d_C, d_A, d_B, 3, 7);
-
+  conv_naive<<<grid, threads >>>(d_C, d_A, d_B, 3, 5);
+  gpuErrchk(cudaPeekAtLastError());
+  
   // copy result from device to host
-  cudaMemcpy(h_C, d_C, mem_size_C, cudaMemcpyDeviceToHost);
+  gpuErrchk(cudaMemcpy(h_C, d_C, mem_size_C, cudaMemcpyDeviceToHost));
 
-
+  
   // stop and destroy timer
   cudaEventCreate(&stop);
   cudaEventRecord(stop, NULL);
@@ -226,17 +307,18 @@ int main(int argc, char **argv) {
 	cudaFree( d_A );
 	cudaFree( d_B );
 	cudaFree( d_C );
+
   // free(h_A);
   // free(h_B);
-  // free(h_C);
+  free(h_C);
 
   /* Performance computation, results and performance printing ------------ */
-  // auto flop = 2 * (float)WC * (float)HC * (float)WA;
+  auto flop = 2 * (float)WC * (float)HC * (float)WA;
 
-  // std::cout << " == Performances " << std::endl;
-  // std::cout << "\t Processing time: " << msecTotal << " (ms)"
-  //           << std::endl;
-  // std::cout << "\t GFLOPS: " << flop / msecTotal / 1e+6 << std::endl;
+  std::cout << " == Performances " << std::endl;
+  std::cout << "\t Processing time: " << msecTotal << " (ms)"
+            << std::endl;
+  std::cout << "\t GFLOPS: " << flop / msecTotal / 1e+6 << std::endl;
 
   return (EXIT_SUCCESS);
 }
