@@ -44,32 +44,11 @@ inline void gpuAssert(cudaError_t code, const char *file, int line, bool abort=t
 
 #define REAL float
 #define BLOCK_SIZE 1
-
-
-//   __global__ void
-// conv_naive( float* output, float* array, float* kernel, int k, int width)
-// {
-//   /* Naive function for calculating convolution between array and 
-//   * 2D kernel. In future requires tiling the image and the kernel 
-//   * into smaller pieces before calculating
-//   *
-//   * float* output:   output array
-//   * float* array:    padded input array
-//   * float* kernel:   the filter kernel
-//   * int k:           floor(width(kernel) / 2)
-//   * int width:       width of input array 
-//   */ 
-
-//   // thread indexing
-//   int row = blockIdx.y * blockDim.y + threadIdx.y;
-//   int col = blockIdx.x * blockDim.x + threadIdx.x;
-
-//   output[row * width + col] = row;
-// }
+#define TW 4
 
 
 __global__ void
-conv_naive( float* output, float* array, float* kernel, int k, int width)
+conv_naive( float* output, float* array, float* kernel, int w, int k)
 {
   /* Naive function for calculating convolution between array and 
   * 2D kernel. In future requires tiling the image and the kernel 
@@ -78,61 +57,144 @@ conv_naive( float* output, float* array, float* kernel, int k, int width)
   * float* output:   output array
   * float* array:    padded input array
   * float* kernel:   the filter kernel
-  * int k:           floor(width(kernel) / 2)
-  * int width:       width of input array 
+  * int w:           width of the non-padded input array
+  * int k:           kernel width
   */ 
 
   // thread indexing
-  int row = blockIdx.y * blockDim.y + threadIdx.y;
-  int col = blockIdx.x * blockDim.x + threadIdx.x;
-  int w_pad = width + k - 1;
+  int i = blockIdx.y * blockDim.y + threadIdx.y;
+  int j = blockIdx.x * blockDim.x + threadIdx.x;
+  int w_pad = w + k - 1;
 
   float accu = 0.0;
   float elem = 0.0;
   int test = 5;
   // Go through each element in the filter kernel
-  for(int x=0; x<k; x++){
-    for(int y=0; y<k; y++){
+  for(int y=0; y<k; y++){
+    for(int x=0; x<k; x++){
         // start from (row-k, col-k) position and move through the
         // elements in the kernel
-        accu += array[(row + y) * w_pad + col + x] * kernel[x * k + y];
+        accu += array[(i + y) * w_pad + j + x] * kernel[x * k + y];
 
         // Debugging
         // if ((row == 0) && (col == 0))
         //   printf("%f * %f = %f\n", array[(row + y) * w_pad + col + x], kernel[x * k + y], array[(row + y) * w_pad + col + x] * kernel[x * k + y]);
       }
   }
-  output[row * width + col] = accu;
+  output[i * w + j] = accu;
 }
+
+
+__global__ void
+conv_tiled( float* output, float* array, float* kernel, int w, int h, int k)
+{
+  /*
+  Function that calculates the convolution between an array array and filter B.
+  The convolution is done in tiles to save global memory access cost.
+  Parameters:
+    - float* output  Output filtered array
+    - float* array   Padded input array
+    - float* kernel  Used filter array
+    - int w          Width of the non-padded input array
+    - int h          Height of the non-padded input array
+    - int k          Width of the kernel
+
+  */
+
+  // kernel to shared memory
+  // Faster: some threads load 2 all threads calculate
+
+  // Shared tile
+  __shared__ float subTile[TW][TW];
+  // TODO: add kernel to shared memory ----------
+  
+  // Block index
+  int bx = blockIdx.x;
+  int by = blockIdx.y;
+
+  // Thread index
+  int tx = threadIdx.x;
+  int ty = threadIdx.y;
+
+  int i = by * TW + ty;
+  int j = bx * TW + tx;
+
+  float accu = 0.0;
+  int pad = (k - 1) / 2; // Kernel has to always be odd numbered
+
+  // row and col moving forward TW - 2*pad indices per tile
+  //   by * (TW - 2*pad) removed from row to get current tile's row index
+  //   bx * (TW - 2*pad) removed from col to get current tile's col index
+  //     -> row index * width + col index results in correct indexing for the subtile
+  size_t ind = (i - by * (TW - 2*pad)) * (w + 2*pad) + j - bx * (TW - 2*pad);
+  subTile[ty][tx] = array[ind];
+
+  // Debugging
+  // printf("(%d, %d) (%d, %d) Subtile [%d,%d] = array[%d]\n", i, j, bx, by, ty, tx, ind);
+
+  // Sync so all data in subtile is present for calculations. Later there is no need 
+  // for another synchronisation because the tiles are independent of each other
+  __syncthreads();
+
+  for(int y=0; y<k; y++){
+    for(int x=0; x<k; x++){
+      // start from (row-k, col-k) position and move through the
+      // elements in the kernel
+      accu += subTile[ty + y][tx + x] * kernel[y * k + x];
+      //accu += array[(row + y) * w_pad + col + x] * kernel[x * k + y];
+
+      // Debugging
+      // if ((ty == 0) && (tx == 1))
+      //   printf("%d,%d: %f * %f = %f (%d)\n", bx, by, subTile[ty + y][tx + x], kernel[y * k + x], subTile[ty + y][tx + x] * kernel[y * k + x], y * k + x);
+    }
+  }
+  // Only the center elements of convolution are needed, skip padded area around calculation
+  if ((ty < TW - 2*pad) && (tx < TW - 2*pad)) {
+    int outx = (by * (TW - 2*pad) + ty) * w;
+    int outy = bx * (TW - 2*pad) + tx;
+    // Do not write elements that are outside of output bounds because of tiling
+    if ((outx < w) || (outy < h)) {
+      // Index calculation:
+      //   Each row and column of a tile increases the index in that direction by 2*pad
+      //   So add multiple of that to each row + the thread row and to each column + the thread column 
+      output[(by * (TW - 2*pad) + ty) * w + bx * (TW - 2*pad) + tx] = accu;
+
+      // Debugging
+      // printf("%d, %d :: %d, %d\n", ty, tx, (by * (TW - 2*pad) + ty) * w, bx * (TW - 2*pad) + tx);
+    }
+  }
+}
+
 
 void sobel_filter(int k, REAL *&A) {
-    float v, x_dist, y_dist;
-    for (int i = 0; i < k; i++) {
-        for (int j = 0; j < k; j++) {
-            if (j == floor(k/2)){
-                v = 0;
-            }
-            else {
-                y_dist = (i - floor(k/2));
-                x_dist = (j - floor(k/2));
-                v = x_dist / (x_dist * x_dist + y_dist * y_dist);
-            }
-            A[i * k + j] = v;
-        }
-    }
+  float v, x_dist, y_dist;
+  for (int i = 0; i < k; i++) {
+      for (int j = 0; j < k; j++) {
+          if (j == floor(k/2)){
+              v = 0;
+          }
+          else {
+              y_dist = (i - floor(k/2));
+              x_dist = (j - floor(k/2));
+              v = x_dist / (x_dist * x_dist + y_dist * y_dist);
+          }
+          A[i * k + j] = v;
+      }
+  }
 }
 
+
 void print_array(REAL *&A, int M) {
-    std::cout << "[";
-    for (int i = 0; i < M*M; i++) {
-         
-        std::cout << A[i] << " ";
-        if ((i+1)%M ==0){
-            std::cout <<"]\n";
-            std::cout << "[";
-        }
+  std::cout << "[";
+  for (int i = 0; i < M*M; i++) {
+    std::cout << A[i] << " ";
+    if ((i+1)%M ==0){
+      std::cout <<"]\n";
+      std::cout << "[";
     }
+  }
 }
+
 
 ///
 /// Top level driver
@@ -283,11 +345,17 @@ int main(int argc, char **argv) {
   // threads = dim3(BS, BS);
   // threads=dim3(BLOCK_SIZE, BLOCK_SIZE);
   // grid = dim3(WC / threads.x, HC / threads.y);
-  threads = dim3(5, 5);
-  grid = dim3(1);
-  
-  // execute the kernel
-  conv_naive<<<grid, threads >>>(d_C, d_A, d_B, 3, 5);
+
+  // TODO: Find programmatic values for grids/threads. Currently is calculated only for this example
+  // execute the naive kernel
+  // threads = dim3(5, 5);
+  // grid = dim3(1); 
+  // conv_naive<<<grid, threads>>>(d_C, d_A, d_B, 5, 3);
+
+  // execute the tiled kernel
+  threads = dim3(TW, TW);
+  grid = dim3(3, 3); 
+  conv_tiled<<<grid, threads >>>(d_C, d_A, d_B, 5, 5, 3);
   gpuErrchk(cudaPeekAtLastError());
   
   // copy result from device to host
@@ -308,8 +376,7 @@ int main(int argc, char **argv) {
 	cudaFree( d_B );
 	cudaFree( d_C );
 
-  // free(h_A);
-  // free(h_B);
+  // A and B are static for now
   free(h_C);
 
   /* Performance computation, results and performance printing ------------ */
