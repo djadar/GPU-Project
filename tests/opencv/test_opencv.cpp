@@ -30,7 +30,6 @@ void sobel_filter(int k, REAL *&A) {
     }
 }
 
-
 void print_array(char * name, REAL *&A, int M) {
     std::cout << "Matrix" <<name<<" \n[";
     for (int i = 0; i < M*M; i++) {
@@ -42,7 +41,9 @@ void print_array(char * name, REAL *&A, int M) {
         }
         
     }
+    // std::cout << "" << std::endl;
 }
+
 void array_padding(REAL *&A, REAL *&B, int pad, int w, int h) {
     int out_w = w + pad * 2;
     for (int r = 0; r < h; r++) {
@@ -51,16 +52,17 @@ void array_padding(REAL *&A, REAL *&B, int pad, int w, int h) {
         }
     }
 }
-void conv(){
+
+void conv(REAL *&frameArray, REAL *&array, int * size, REAL *&kernel, int k, REAL *&out){
     //
-    array_padding(a_nopad, array, pad, 5, 5);
+    array_padding(frameArray, array, k/2, size[0], size[1]);
     //
     float total = 0;
     float elem = 0;
-    int w_pad = w + 2 * pad;
+    int w_pad = size[1] + 2 * (k/2);
     // Go through each pixel in the original array
-    for (int r = 0; r < h; r++) {
-        for (int c = 0; c < w; c++) {
+    for (int r = 0; r < size[0]; r++) {
+        for (int c = 0; c < size[1]; c++) {
             total = 0;
             // Go through each element in the kernel array
             for (int x = 0; x < k; x++) {
@@ -69,49 +71,54 @@ void conv(){
                     total += elem * kernel[x * k + y]; // Add to the total value for the output pixel
                 }
             }
-            out[r * w + c] = total;
+            out[r * size[1] + c] = total;
         }
     }
+    //print_array("Output", out, size[0]);
 }
-int get_image(char* name, REAL *frameArray ){
+int get_image(char* name, REAL *frameArray, int *size ){
 
-  cv::Mat image;
-  image = cv::imread(name ,1);
-  //cv::IMREAD_COLOR);
-  if(! image.data ) {
-      std::cout <<  "Image not found or unable to open" << std::endl ;
-      return -1;
-    }
+   cv::Mat imgOriginal;        // input image
+    cv::Mat imgGrayscale;        // grayscale of input image
 
- cv::namedWindow( "mes images", cv::WINDOW_AUTOSIZE );
-  cv::imshow( "Initial", image );
-  
+    imgOriginal = cv::imread(name);            // open image
 
-  int numCols = image.cols;
-  int numRows = image.rows;
+    cv::cvtColor(imgOriginal, imgGrayscale, CV_BGR2GRAY);        // convert to grayscale
 
-  int size = numCols*numRows;
+    const int channels = imgGrayscale.channels();
+    printf("Number of channels = %d", channels);
 
-  int total = 0;
-  int elem = 0;
+    cv::Mat image ;
+    imgGrayscale.copyTo(image); // Just to make sure the Mat objects are of the same size. 
+
+  int numCols = size[1];
+  int numRows = size[0];
 
   //std::cout << "Output array" << std::endl;
-  frameArray = new REAL[size];
-
+  frameArray = new REAL[numCols*numRows];
+  double intensity, value;
   for (int x = 0; x < numCols; x++) {          // x-axis, cols
-    for (int y = 0; y < numRows; y++) {          // y-axis rows
-        double intensity = image.at<uchar>(cv::Point(x, y));
-        frameArray[x * numCols + y] = intensity;
+    for (int y = 0; y < numRows; y++) { 
+        intensity = frameArray[x * numCols + y];
+        if (intensity >= 0 && intensity <= 255){
+            value = floor(intensity);
+        }else if (intensity < 0){
+            value = 0;
+        }else if (intensity > 255){
+            value = 255;
+        }
+        image.at<uchar>(x, y) = value;
+       std::cout <<image.at<uchar>(cv::Point(x, y));
     }
+    // std::cout <<" \n" << std::endl;
   }
 
-  print_array("Input", frameArray, numCols);
+  //print_array("Input", frameArray, numCols);
+
+  cv::namedWindow( "mes images", cv::WINDOW_AUTOSIZE );
+  cv::imshow( "Final", image );
   
-  
-  
-  //cv::imshow( "Final", final );
-  
-  cv::waitKey(0);
+  //cv::waitKey(0);
 }
 
 int main( int argc, char** argv ) {
@@ -119,21 +126,51 @@ int main( int argc, char** argv ) {
   
   char* name = "opencv_testimage.jpg";
   char* name2 = "bitmoji.png";
-  REAL *frameArray ;
-
-  int n = get_image(name, frameArray);
   
-  //
-  if n>0{
-      //kernel
+  int *size = (int *)malloc(sizeof(int)*2);
+  //int n = get_image(name, frameArray, size);
+  cv::Mat image;
+  image = cv::imread(name ,1);
+  //cv::IMREAD_COLOR);
+  if(! image.data ) {
+      std::cout <<  "Image not found or unable to open" << std::endl ;
+      return -1;
+    }
+  cv::namedWindow( "mes images", cv::WINDOW_AUTOSIZE );
+  //cv::imshow( "Initial", image );
+  int numCols = image.cols;
+  int numRows = image.rows;
+
+  //std::cout << "Output array" << std::endl;
+  REAL *frameArray = new REAL[numCols*numRows];
+  double intensity;
+  for (int x = 0; x < numCols; x++) {          // x-axis, cols
+    for (int y = 0; y < numRows; y++) {          // y-axis rows
+        intensity = image.at<uchar>(cv::Point(x, y));
+        //std::cout <<(double)image.at<uchar>(cv::Point(x, y)) <<" \n";
+        frameArray[x * numCols + y] = intensity;
+    }
+  }
+
+  //print_array("Input", frameArray, numCols);
+  
+  size[0] = numCols;
+  size[1] = numRows;
+  
+  cv::waitKey(0);
+  
+    //kernel
     int k = 3;
     int pad = floor(k / 2);
+    REAL *kernel = new REAL[k*k];
     sobel_filter(k, kernel);
-    print_array(kernel, k);
+    //print_array("Kernel",kernel, k);
     //Array
-    REAL *array = 
-    conv()
-  }
+    REAL *array = new REAL[(size[0]+1)*(size[1]+1)];
+    REAL *out = new REAL[size[0]*size[1]];
+    conv(frameArray, array, size, kernel, k, out);
   
-  return n;
+  int n = get_image(name, out, size);
+
+  return 0;
 }
