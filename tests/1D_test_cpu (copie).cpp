@@ -8,13 +8,6 @@ typedef double REAL;
 typedef float REAL;
 #endif
 
-#include <chrono>
-#include <unistd.h>
-
-using namespace std;
-using namespace chrono;
-
-
 // Create sobel filter with size k x k
 void sobel_filter(int k, REAL *&A) {
     float v, x_dist, y_dist;
@@ -65,7 +58,7 @@ void print_array(char * name, REAL *&A, int M) {
 
 // Do the product convolution of A by the Kernel
 void fillA(REAL *&A, int M) {
-    REAL array [M*M] = {0, 1, 2, 3, 4, 0, 1, 2, 3, 4, 5, 2, 5, 2, 0, 5, 2, 5, 2, 0, 5, 2, 5, 2, 0};
+    //REAL array [M*M] = {0, 1, 2, 3, 4, 0, 1, 2, 3, 4, 5, 2, 5, 2, 0, 5, 2, 5, 2, 0, 5, 2, 5, 2, 0};
     
     for (int i = 0; i < M; ++i) {
         for (int j = 0; j < M; ++j) {
@@ -129,24 +122,21 @@ void convolution_product(REAL *&array , REAL *&kernel, REAL *&out, int N, int K)
         for (int j = 0; j < N; j++) {
             total = 0;
             // Go through each element in the kernel array
-            int base = i * N + j;
-            int mut = base - K/2 -(N*(K/2));
-            //std::cout << "mut =  " << mut << std::endl;
+            int mut = i * N + j - (N+1)*(K/2);
             for (int x = 0; x < K; x++) {
                 for (int y = 0; y < K; y++) {
-                    int ind = mut + x * N + y;
-                    //std::cout << "ind =  " << ind << std::endl;
-                    if (ind >= 0 ) {
+                    int ind = mut + x * N + y +3;
+                    if (ind >= 0) {
                         elem = array[ind];
-                        //std::cout  << "a(i,j) = " << elem ;
+                        //std::cout << elem ;
                     }else{
                         elem = 0;
                     }
-                     //std::cout << " and k(a,b) = " << kernel[x * K + y] << std::endl;
+                    
                     total = total + elem * kernel[x * K + y]; // Add to the total value for the output pixel
                 }
             }
-            //std::cout << "\n total = "<< total<< "\n" ;
+            //std::cout << "\n"<< total<< "\n" ;
             out[i * N + j] = total;
         }
     }
@@ -165,7 +155,7 @@ int main() {
     //array = array_padding(k, array);
     fillA(A,M);
 
-    //std::cout << "Input" << std::endl;
+    std::cout << "Input" << std::endl;
     print_array("A",A,M);
     
     REAL *B = new REAL[M*M];
@@ -173,40 +163,26 @@ int main() {
     fillB(B,M);
 
     
-    //std::cout << "InputB" << std::endl;
-    //print_array("B",B,M);
+    std::cout << "InputB" << std::endl;
+    print_array("B",A,M);
 
-    //std::cout << "]\n";
+    
+
+
+    std::cout << "]\n";
     REAL *kernel = new REAL[k*k];
     sobel_filter(k,kernel);
     
-    //std::cout << "Kernel" << std::endl;
+    std::cout << "Kernel" << std::endl;
     print_array("Kernel", kernel, k);
 
-    std::cout << "]\n" << std::endl;
+    std::cout << "]\n";
     REAL *out = new REAL[M*M];
-
-    //time calculation
-    auto start = chrono::steady_clock::now();
-    //sleep(3);
-    
     convolution_product(A, kernel, out, M, k);
-    
-    auto end = chrono::steady_clock::now();
+
+    std::cout << "Output" << std::endl;
     print_array("Output",out,M);
-
-    cout << "Elapsed time in nanoseconds: "
-        << chrono::duration_cast<chrono::nanoseconds>(end - start).count()
-        << " ns" << endl;
-
-    cout << "Elapsed time in seconds: "
-        << chrono::duration_cast<chrono::seconds>(end - start).count()
-        << " sec";
-
     
-
-
-
     /*
     float total = 0;
     float elem = 0;
