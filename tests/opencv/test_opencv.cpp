@@ -1,6 +1,10 @@
 #include <opencv2/highgui.hpp>
 #include <opencv2/core/core.hpp>
+#include <opencv2/highgui/highgui.hpp>
+#include <opencv2/imgproc.hpp>
+#include "opencv2/opencv.hpp"
 #include <iostream>
+#include <vector>
 
 #ifdef DP
 typedef double REAL;
@@ -77,7 +81,7 @@ int get_image(char* name){
   int elem = 0;
 
   std::cout << "Output array" << std::endl;
-  REAL *frameArray = new REAL[];
+  REAL *frameArray = new REAL[size];
 
   for (int x = 0; x < numCols; x++) {          // x-axis, cols
     for (int y = 0; y < numRows; y++) {          // y-axis rows
