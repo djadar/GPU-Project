@@ -8,6 +8,13 @@ typedef double REAL;
 typedef float REAL;
 #endif
 
+#include <chrono>
+#include <unistd.h>
+
+using namespace std;
+using namespace chrono;
+
+
 // Create sobel filter with size k x k
 void sobel_filter(int k, REAL *&A) {
     float v, x_dist, y_dist;
@@ -124,22 +131,22 @@ void convolution_product(REAL *&array , REAL *&kernel, REAL *&out, int N, int K)
             // Go through each element in the kernel array
             int base = i * N + j;
             int mut = base - K/2 -(N*(K/2));
-            std::cout << "mut =  " << mut << std::endl;
+            //std::cout << "mut =  " << mut << std::endl;
             for (int x = 0; x < K; x++) {
                 for (int y = 0; y < K; y++) {
                     int ind = mut + x * N + y;
-                    std::cout << "ind =  " << ind << std::endl;
+                    //std::cout << "ind =  " << ind << std::endl;
                     if (ind >= 0 ) {
                         elem = array[ind];
-                        std::cout  << "a(i,j) = " << elem ;
+                        //std::cout  << "a(i,j) = " << elem ;
                     }else{
                         elem = 0;
                     }
-                     std::cout << " and k(a,b) = " << kernel[x * K + y] << std::endl;
+                     //std::cout << " and k(a,b) = " << kernel[x * K + y] << std::endl;
                     total = total + elem * kernel[x * K + y]; // Add to the total value for the output pixel
                 }
             }
-            std::cout << "\n total = "<< total<< "\n" ;
+            //std::cout << "\n total = "<< total<< "\n" ;
             out[i * N + j] = total;
         }
     }
@@ -178,11 +185,28 @@ int main() {
 
     std::cout << "]\n" << std::endl;
     REAL *out = new REAL[M*M];
-    convolution_product(A, kernel, out, M, k);
 
-    //std::cout << "Output" << std::endl;
-    print_array("Output",out,M);
+    //time calculation
+    auto start = chrono::steady_clock::now();
+    //sleep(3);
     
+    convolution_product(A, kernel, out, M, k);
+    
+    auto end = chrono::steady_clock::now();
+    print_array("Output",out,M);
+
+    cout << "Elapsed time in nanoseconds: "
+        << chrono::duration_cast<chrono::nanoseconds>(end - start).count()
+        << " ns" << endl;
+
+    cout << "Elapsed time in seconds: "
+        << chrono::duration_cast<chrono::seconds>(end - start).count()
+        << " sec";
+
+    
+
+
+
     /*
     float total = 0;
     float elem = 0;
