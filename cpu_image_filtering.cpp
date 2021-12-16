@@ -1,7 +1,12 @@
 #include <iostream>
 #include <math.h>
 #include <vector>
+#include <chrono>
+#include <unistd.h>
 //#include <opencv2/opencv.hpp>
+
+using namespace std;
+using namespace chrono;
 
 #define REAL float
 
@@ -85,6 +90,8 @@ int main() {
     float total = 0;
     float elem = 0;
     int w_pad = w + 2 * pad;
+
+    auto start = chrono::steady_clock::now();
     // Go through each pixel in the original array
     for (int r = 0; r < h; r++) {
         for (int c = 0; c < w; c++) {
@@ -99,9 +106,13 @@ int main() {
             out[r * w + c] = total;
         }
     }
+    auto end = chrono::steady_clock::now();
     // TODO: Replace with visualizing image with opencv
     std::cout << "Filtered output array" << std::endl;
     print_array(out, 5);
+    std::cout << "Elapsed time in microseconds: "
+              << chrono::duration_cast<chrono::microseconds>(end - start).count()
+              << " ms " << std::endl;
 
     return 0;
 }
