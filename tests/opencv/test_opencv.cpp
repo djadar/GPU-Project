@@ -88,16 +88,18 @@ int get_image(char* name, REAL *&frameArray, int *size ){
     image = cv::imread(name);            // open image
 
     cv::cvtColor(image, imgGrayscale, CV_BGR2GRAY);        // convert to grayscale
-
+    
     const int channels = image.channels();
     printf("Number of channels = %d \n", channels);
 
     
     imgGrayscale.copyTo(image); // Just to make sure the Mat objects are of the same size. 
-    image = imgGrayscale;
     std::cout <<" \n" << std::endl;
-  int numCols = size[1];
-  int numRows = size[0];
+    image = cv::imread(name, CV_LOAD_IMAGE_GRAYSCALE);
+    const int channels2 = image.channels();
+    printf("Number of channels = %d \n", channels2);
+  int numCols = image.cols;
+  int numRows = image.cols;
   //std::cout  <<"numCols = " <<numCols <<" and numRows = " <<numRows <<" \n" << std::endl;
   //std::cout << "Output array" << std::endl;
   //frameArray = new REAL[numCols*numRows];
@@ -145,6 +147,7 @@ int main( int argc, char** argv ) {
       std::cout <<  "Image not found or unable to open" << std::endl ;
       return -1;
     }
+image = cv::imread(name, CV_LOAD_IMAGE_GRAYSCALE);
   cv::namedWindow( "mes images", cv::WINDOW_AUTOSIZE );
   cv::imshow( "Initial", image );
   int numCols = image.cols;
