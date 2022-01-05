@@ -31,17 +31,14 @@ void sobel_filter(int k, REAL *&A) {
 }
 
 void print_array(char * name, REAL *&A, int M) {
-    std::cout << "Matrix" <<name<<" \n[";
-    for (int i = 0; i < M*M; i++) {
-         
+    for (int i = 0; i < M*M; i++) { 
         std::cout << A[i] << " ";
         if ((i+1)%M ==0){
             std::cout <<"]\n";
             std::cout << "[";
         }
-        
     }
-    // std::cout << "" << std::endl;
+    std::cout << "" << std::endl;
 }
 
 void array_padding(REAL *&A, REAL *&B, int pad, int w, int h) {
@@ -54,11 +51,7 @@ void array_padding(REAL *&A, REAL *&B, int pad, int w, int h) {
 }
 
 void conv(REAL *&frameArray, REAL *&array, int * size, REAL *&kernel, int k, REAL *&out){
-    //
-    //print_array("3- Input ", frameArray, size[1]);
     array_padding(frameArray, array, k/2, size[0], size[1]);
-    //
-    //print_array("4- Input", frameArray, size[1]);
     float total = 0;
     float elem = 0;
     int w_pad = size[1] + 2 * (k/2);
@@ -76,58 +69,45 @@ void conv(REAL *&frameArray, REAL *&array, int * size, REAL *&kernel, int k, REA
             out[r * size[1] + c] = total;
         }
     }
-    //print_array("Output", out, size[0]);
 }
-int get_image(char* name, REAL *&frameArray, int *size ){
-
-   //cv::Mat imgOriginal;        // input image
+int get_image(char* name, REAL *&frameArray, int *size ){        
     cv::Mat imgGrayscale;        // grayscale of input image
-   // print_array("2- Input", frameArray, size[1]);
-    //imgOriginal
-    cv::Mat image ;
+    cv::Mat image ;             // input image
     image = cv::imread(name);            // open image
 
     cv::cvtColor(image, imgGrayscale, CV_BGR2GRAY);        // convert to grayscale
 
     const int channels = image.channels();
     printf("Number of channels = %d \n", channels);
-
     
     imgGrayscale.copyTo(image); // Just to make sure the Mat objects are of the same size. 
-    image = imgGrayscale;
     std::cout <<" \n" << std::endl;
-  int numCols = size[1];
-  int numRows = size[0];
-  //std::cout  <<"numCols = " <<numCols <<" and numRows = " <<numRows <<" \n" << std::endl;
-  //std::cout << "Output array" << std::endl;
-  //frameArray = new REAL[numCols*numRows];
-  REAL intensity;
-  int value;
-  for (int x = 0; x < numCols; x++) {          // x-axis, cols
-    for (int y = 0; y < numRows; y++) { 
-        intensity = frameArray[x * numCols + y];
-        //std::cout << "voici"<<frameArray[x * numCols + y];
-        if (intensity >= 0 && intensity <= 255){
-            //value = floor(intensity);
-            value = intensity;
-        }else if (intensity < 0){
-            value = 0;
-        }else if (intensity > 255){
-            value = 255;
+    const int channels = image.channels();
+    printf("Number of channels = %d \n", channels);
+    int numCols = size[1];
+    int numRows = size[0];
+    REAL intensity;
+    int value;
+    for (int x = 0; x < numCols; x++) {          // x-axis, cols
+        for (int y = 0; y < numRows; y++) { 
+            intensity = frameArray[x * numCols + y];
+           
+            if (intensity >= 0 && intensity <= 255){
+                value = intensity;
+            }else if (intensity < 0){
+                value = 0;
+            }else if (intensity > 255){
+                value = 255;
+            }
+            image.at<uchar>(x, y) = frameArray[x * numCols + y];
         }
-        //std::cout << frameArray[x * numCols + y];
-        image.at<uchar>(x, y) = frameArray[x * numCols + y];
-        //std::cout << "voici"<<image.at<uchar>(x, y);
     }
-    // std::cout <<" \n" << std::endl;
-  }
     std::cout <<" \n" << std::endl;
-  //print_array("Input", frameArray, numCols);
 
-  cv::namedWindow( "mes images", cv::WINDOW_AUTOSIZE );
-  cv::imshow( "Final", image );
-  std::cout << "fini"<< std::endl;
-  cv::waitKey(0);
+    cv::namedWindow( "mes images", cv::WINDOW_AUTOSIZE );
+    cv::imshow( "Final", image );
+    //std::cout << "fini"<< std::endl;
+    cv::waitKey(0);
 }
 
 int main( int argc, char** argv ) {
