@@ -1,7 +1,8 @@
 #define TW 4
+#define WK 3
 
 __global__ void
-conv_tiled( float* out, float* A, float* K, int wK, int wA, int hA)
+conv_tiled_shared( float* out, float* A, float* K, int wA, int hA)
 {
   /*
   Function that calculates the convolution between an array array and filter B.
@@ -21,6 +22,7 @@ conv_tiled( float* out, float* A, float* K, int wK, int wA, int hA)
 
   // Shared tile
   __shared__ float subTile[TW][TW];
+  __shared__ float kernel[WK][WK];
   // TODO: add kernel to shared memory ----------
   
   // Block index
@@ -35,7 +37,7 @@ conv_tiled( float* out, float* A, float* K, int wK, int wA, int hA)
   int j = bx * TW + tx;
 
   float accu = 0.0;
-  int pad = wK / 2; // Kernel has to always be odd numbered
+  int pad = WK / 2; // Kernel has to always be odd numbered
 
   // row and col moving forward TW - 2*pad indices per tile
   //   by * 2*pad removed from row to get current tile's row index
@@ -43,6 +45,8 @@ conv_tiled( float* out, float* A, float* K, int wK, int wA, int hA)
   //     -> row index * width + col index results in correct indexing for the subtile
   size_t ind = (i - by * 2*pad) * (wA + 2*pad) + j - bx * 2*pad;
   subTile[ty][tx] = A[ind];
+  if ((ty < WK) && (tx < WK))
+    kernel[ty][tx] = K[ty * WK + tx];
 
   // Debugging
   // printf("(%d, %d) (%d, %d) Subtile [%d,%d] = A[%d]\n", i, j, bx, by, ty, tx, ind);
@@ -51,11 +55,11 @@ conv_tiled( float* out, float* A, float* K, int wK, int wA, int hA)
   // for another synchronisation because the tiles are independent of each other
   __syncthreads();
 
-  for(int y=0; y<wK; y++){
-    for(int x=0; x<wK; x++){
+  for(int y=0; y<WK; y++){
+    for(int x=0; x<WK; x++){
       // start from (row-k, col-k) position and move through the
       // elements in the kernel
-      accu += subTile[ty + y][tx + x] * K[y * wK + x];
+      accu += subTile[ty + y][tx + x] * kernel[y][x];
 
       // Debugging
       // if ((ty == 0) && (tx == 1))
