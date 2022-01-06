@@ -48,56 +48,56 @@ inline void gpuAssert(cudaError_t code, const char *file, int line, bool abort=t
 
 
 __global__ void
-conv_naive( float* output, float* array, float* kernel, int k, int width)
+conv_naive( float* out, float* A, float* K, int wK, int wA, int hA)
 {
   /* Naive function for calculating convolution between array and 
   * 2D kernel. In future requires tiling the image and the kernel 
   * into smaller pieces before calculating
   *
-  * float* output:   output array
-  * float* array:    padded input array
-  * float* kernel:   the filter kernel
-  * int k:           floor(width(kernel) / 2)
-  * int width:       width of input array 
+  * float* out:   output array
+  * float* A:     padded input array A
+  * float* K:     the filter kernel array
+  * int wK:       width of the filter kernel
+  * int wA:       width of the input array
+  * int hA:       height of the input array
   */
 
-  int pad = (k + 1) / 2;
-  int w_pad = width + pad * 2
+  int pad = wK / 2;
+  int w_pad = wA + pad * 2;
   // thread indexing
   int row = blockIdx.y * blockDim.y + threadIdx.y;
   int col = blockIdx.x * blockDim.x + threadIdx.x;
 
   float accu = 0.0;
   // Go through each element in the filter kernel
-  for(int x=0; x<k; x++){
-    for(int y=0; y<k; y++){
+  for(int y=0; y<wK; y++){
+    for(int x=0; x<wK; x++){
         // start from (row-k, col-k) position and move through the
         // elements in the kernel
-        accu = accu + array[(row + y)*w_pad + col + x] * kernel[y * k + x];
+        accu = accu + A[(row + y)*w_pad + col + x] * K[y * wK + x];
       }
   }
   // each thread writes one element to output matrix
-  if ((row >= 0) && (row < width) && (col >= 0) && (col < width)) {
-    output[ row * width + col ] = accu;
+  if ((row < hA) && (col < wA)) {
+    out[ row * wA + col ] = accu;
     //printf("(%d, %d): %f \n", row, col, accu);
-    //output[ row * width + col] = 1.0;
   }
 }
 
 
 __global__ void
-conv_tiled( float* output, float* array, float* kernel, int w, int h, int k)
+conv_tiled( float* out, float* A, float* K, int wK, int wA, int hA)
 {
   /*
   Function that calculates the convolution between an array array and filter B.
   The convolution is done in tiles to save global memory access cost.
   Parameters:
-    - float* output  Output filtered array
-    - float* array   Padded input array
-    - float* kernel  Used filter array
-    - int w          Width of the non-padded input array
-    - int h          Height of the non-padded input array
-    - int k          Width of the kernel
+    - float* out    Output filtered array
+    - float* A      Padded input array
+    - float* K      Used filter array
+    - int wA        Width of the non-padded input array
+    - int hA        Height of the non-padded input array
+    - int wK        Width of the kernel
 
   */
 
@@ -120,44 +120,43 @@ conv_tiled( float* output, float* array, float* kernel, int w, int h, int k)
   int j = bx * TW + tx;
 
   float accu = 0.0;
-  int pad = (k - 1) / 2; // Kernel has to always be odd numbered
+  int pad = wK / 2; // Kernel has to always be odd numbered
 
   // row and col moving forward TW - 2*pad indices per tile
-  //   by * (TW - 2*pad) removed from row to get current tile's row index
-  //   bx * (TW - 2*pad) removed from col to get current tile's col index
+  //   by * 2*pad removed from row to get current tile's row index
+  //   bx * 2*pad removed from col to get current tile's col index
   //     -> row index * width + col index results in correct indexing for the subtile
-  size_t ind = (i - by * (TW - 2*pad)) * (w + 2*pad) + j - bx * (TW - 2*pad);
-  subTile[ty][tx] = array[ind];
+  size_t ind = (i - by * 2*pad) * (wA + 2*pad) + j - bx * 2*pad;
+  subTile[ty][tx] = A[ind];
 
   // Debugging
-  // printf("(%d, %d) (%d, %d) Subtile [%d,%d] = array[%d]\n", i, j, bx, by, ty, tx, ind);
+  // printf("(%d, %d) (%d, %d) Subtile [%d,%d] = A[%d]\n", i, j, bx, by, ty, tx, ind);
 
   // Sync so all data in subtile is present for calculations. Later there is no need 
   // for another synchronisation because the tiles are independent of each other
   __syncthreads();
 
-  for(int y=0; y<k; y++){
-    for(int x=0; x<k; x++){
+  for(int y=0; y<wK; y++){
+    for(int x=0; x<wK; x++){
       // start from (row-k, col-k) position and move through the
       // elements in the kernel
-      accu += subTile[ty + y][tx + x] * kernel[y * k + x];
-      //accu += array[(row + y) * w_pad + col + x] * kernel[x * k + y];
+      accu += subTile[ty + y][tx + x] * K[y * wK + x];
 
       // Debugging
       // if ((ty == 0) && (tx == 1))
-      //   printf("%d,%d: %f * %f = %f (%d)\n", bx, by, subTile[ty + y][tx + x], kernel[y * k + x], subTile[ty + y][tx + x] * kernel[y * k + x], y * k + x);
+      //   printf("%d,%d: %f * %f = %f (%d)\n", bx, by, subTile[ty + y][tx + x], K[y * wK + x], subTile[ty + y][tx + x] * K[y * wK + x], y * wK + x);
     }
   }
   // Only the center elements of convolution are needed, skip padded area around calculation
   if ((ty < TW - 2*pad) && (tx < TW - 2*pad)) {
-    int outx = (by * (TW - 2*pad) + ty) * w;
-    int outy = bx * (TW - 2*pad) + tx;
+    int outy = (by * (TW - 2*pad) + ty);
+    int outx = bx * (TW - 2*pad) + tx;
     // Do not write elements that are outside of output bounds because of tiling
-    if ((outx < w) || (outy < h)) {
+    if ((outx < wA) && (outy < hA)) {
       // Index calculation:
       //   Each row and column of a tile increases the index in that direction by 2*pad
       //   So add multiple of that to each row + the thread row and to each column + the thread column 
-      output[(by * (TW - 2*pad) + ty) * w + bx * (TW - 2*pad) + tx] = accu;
+      out[outy * wA + outx] = accu;
 
       // Debugging
       // printf("%d, %d :: %d, %d\n", ty, tx, (by * (TW - 2*pad) + ty) * w, bx * (TW - 2*pad) + tx);
@@ -184,11 +183,11 @@ void sobel_filter(int k, REAL *&A) {
 }
 
 
-void print_array(REAL *&A, int M) {
+void print_array(REAL *&A, int w, int h) {
   std::cout << "[";
-  for (int i = 0; i < M*M; i++) {
+  for (int i = 0; i < w*h; i++) {
     std::cout << A[i] << " ";
-    if ((i+1)%M ==0){
+    if ((i+1)%w ==0){
       std::cout <<"]\n";
       std::cout << "[";
     }
@@ -205,7 +204,7 @@ int main(int argc, char **argv) {
   int k = 3;
   REAL *kernel = new REAL[k*k];
   sobel_filter(k, kernel);
-  print_array(kernel, k);
+  print_array(kernel, k, k);
   // Define parser 
   // args::ArgumentParser parser("gemm_cuda", "Matrix Multiply using CUDA");
 
@@ -242,7 +241,7 @@ int main(int argc, char **argv) {
 
 
 
-  int WA = 5;
+  int WA = 6;
   int WB = 3;
   int HA = 5;
   int HB = 3;
@@ -297,13 +296,13 @@ int main(int argc, char **argv) {
   //fill_random<REAL>(h_A, WA, HA);
   //fill_random<REAL>(h_B, WB, HB);
   
-  float AA [7*7] = {0,0,0,0,0,0,0,
-                    0,1,1,1,1,1,0,
-                    0,1,1,1,1,1,0,
-                    0,1,1,1,1,1,0,
-                    0,1,1,1,1,1,0,
-                    0,1,1,1,1,1,0,
-                    0,0,0,0,0,0,0};
+  float AA [7*8] = {0,0,0,0,0,0,0,0,
+                    0,1,1,1,1,1,1,0,
+                    0,1,1,1,1,1,1,0,
+                    0,1,1,1,1,1,1,0,
+                    0,1,1,1,1,1,1,0,
+                    0,1,1,1,1,1,1,0,
+                    0,0,0,0,0,0,0,0};
 
   float BB [3*3] = {-0.5, 0.0, 0.5, 
                     -1.0, 0.0, 1.0,
@@ -329,7 +328,7 @@ int main(int argc, char **argv) {
   gpuErrchk(cudaMalloc((void **)&d_C, mem_size_C));
 
   // allocate host memory for the result
-  float *h_C = new float[25];//(float *)malloc(mem_size_C);
+  float *h_C = new float[30];//(float *)malloc(mem_size_C);
 
   dim3 threads, grid;
 
@@ -355,8 +354,8 @@ int main(int argc, char **argv) {
   // execute the tiled kernel
   threads = dim3(TW, TW);
   grid = dim3(3, 3); 
-  // conv_tiled<<<grid, threads >>>(d_C, d_A, d_B, 5, 5, 3);
-  conv_naive<<<grid, threads >>>(d_C, d_A, d_B, 3, 5);
+  conv_tiled<<<grid, threads >>>(d_C, d_A, d_B, 3, 6, 5);
+  // conv_naive<<<grid, threads >>>(d_C, d_A, d_B, 3, 6, 5);
   gpuErrchk(cudaPeekAtLastError());
   
   // copy result from device to host
@@ -369,9 +368,9 @@ int main(int argc, char **argv) {
   cudaEventSynchronize(stop);
   cudaEventElapsedTime(&msecTotal, start, stop);
 
-  print_array(h_A, 7);
+  print_array(h_A, 8, 7);
   std::cout << std::endl;
-  print_array(h_C, 5);
+  print_array(h_C, 6, 5);
 
 	cudaFree( d_A );
 	cudaFree( d_B );
