@@ -100,7 +100,7 @@ int main() {
             for (int x = 0; x < k; x++) {
                 for (int y = 0; y < k; y++) {
                     elem = array[(r + y) * w_pad + c + x];
-                    total += elem * kernel[x * k + y]; // Add to the total value for the output pixel
+                    total += elem * kernel[y * k + x]; // Add to the total value for the output pixel
                 }
             }
             out[r * w + c] = total;

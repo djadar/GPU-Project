@@ -48,7 +48,7 @@ inline void gpuAssert(cudaError_t code, const char *file, int line, bool abort=t
 
 
 __global__ void
-conv_naive( float* output, float* array, float* kernel, int w, int k)
+conv_naive( float* output, float* array, float* kernel, int k, int width)
 {
   /* Naive function for calculating convolution between array and 
   * 2D kernel. In future requires tiling the image and the kernel 
@@ -57,31 +57,31 @@ conv_naive( float* output, float* array, float* kernel, int w, int k)
   * float* output:   output array
   * float* array:    padded input array
   * float* kernel:   the filter kernel
-  * int w:           width of the non-padded input array
-  * int k:           kernel width
-  */ 
+  * int k:           floor(width(kernel) / 2)
+  * int width:       width of input array 
+  */
 
+  int pad = (k + 1) / 2;
+  int w_pad = width + pad * 2
   // thread indexing
-  int i = blockIdx.y * blockDim.y + threadIdx.y;
-  int j = blockIdx.x * blockDim.x + threadIdx.x;
-  int w_pad = w + k - 1;
+  int row = blockIdx.y * blockDim.y + threadIdx.y;
+  int col = blockIdx.x * blockDim.x + threadIdx.x;
 
   float accu = 0.0;
-  float elem = 0.0;
-  int test = 5;
   // Go through each element in the filter kernel
-  for(int y=0; y<k; y++){
-    for(int x=0; x<k; x++){
+  for(int x=0; x<k; x++){
+    for(int y=0; y<k; y++){
         // start from (row-k, col-k) position and move through the
         // elements in the kernel
-        accu += array[(i + y) * w_pad + j + x] * kernel[x * k + y];
-
-        // Debugging
-        // if ((row == 0) && (col == 0))
-        //   printf("%f * %f = %f\n", array[(row + y) * w_pad + col + x], kernel[x * k + y], array[(row + y) * w_pad + col + x] * kernel[x * k + y]);
+        accu = accu + array[(row + y)*w_pad + col + x] * kernel[y * k + x];
       }
   }
-  output[i * w + j] = accu;
+  // each thread writes one element to output matrix
+  if ((row >= 0) && (row < width) && (col >= 0) && (col < width)) {
+    output[ row * width + col ] = accu;
+    //printf("(%d, %d): %f \n", row, col, accu);
+    //output[ row * width + col] = 1.0;
+  }
 }
 
 
@@ -355,7 +355,8 @@ int main(int argc, char **argv) {
   // execute the tiled kernel
   threads = dim3(TW, TW);
   grid = dim3(3, 3); 
-  conv_tiled<<<grid, threads >>>(d_C, d_A, d_B, 5, 5, 3);
+  // conv_tiled<<<grid, threads >>>(d_C, d_A, d_B, 5, 5, 3);
+  conv_naive<<<grid, threads >>>(d_C, d_A, d_B, 3, 5);
   gpuErrchk(cudaPeekAtLastError());
   
   // copy result from device to host
