@@ -1,36 +1,36 @@
 __global__ void
-conv_naive( float* output, float* array, float* kernel, int k, int width)
+conv_naive( float* out, float* A, float* K, int wK, int wA, int hA)
 {
   /* Naive function for calculating convolution between array and 
   * 2D kernel. In future requires tiling the image and the kernel 
   * into smaller pieces before calculating
   *
-  * float* output:   output array
-  * float* array:    padded input array
-  * float* kernel:   the filter kernel
-  * int k:           floor(width(kernel) / 2)
-  * int width:       width of input array 
+  * float* out:   output array
+  * float* A:     padded input array A
+  * float* K:     the filter kernel array
+  * int wK:       width of the filter kernel
+  * int wA:       width of the input array
+  * int hA:       height of the input array
   */
 
-  int pad = (k + 1) / 2;
-  int w_pad = width + pad * 2
+  int pad = wK / 2;
+  int w_pad = wA + pad * 2;
   // thread indexing
   int row = blockIdx.y * blockDim.y + threadIdx.y;
   int col = blockIdx.x * blockDim.x + threadIdx.x;
 
   float accu = 0.0;
   // Go through each element in the filter kernel
-  for(int x=0; x<k; x++){
-    for(int y=0; y<k; y++){
+  for(int y=0; y<wK; y++){
+    for(int x=0; x<wK; x++){
         // start from (row-k, col-k) position and move through the
         // elements in the kernel
-        accu = accu + array[(row + y)*w_pad + col + x] * kernel[y * k + x];
+        accu = accu + A[(row + y)*w_pad + col + x] * K[y * wK + x];
       }
   }
   // each thread writes one element to output matrix
-  if ((row >= 0) && (row < width) && (col >= 0) && (col < width)) {
-    output[ row * width + col ] = accu;
+  if ((row < hA) && (col < wA)) {
+    out[ row * wA + col ] = accu;
     //printf("(%d, %d): %f \n", row, col, accu);
-    //output[ row * width + col] = 1.0;
   }
 }
