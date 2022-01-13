@@ -48,7 +48,7 @@ inline void gpuAssert(cudaError_t code, const char *file, int line, bool abort=t
 }
 
 #define REAL float
-#define BLOCK_SIZE 1
+// #define BLOCK_SIZE 1
 #define TW 4
 #define WIDTH_K 3
 
@@ -313,9 +313,7 @@ void sobel_filter(int k, REAL *&A) {
 
 void print_array(REAL *&A, int w, int h) {
   std::cout << "[";
-  for (int i = 0; i < w*h; i++) {
-    if (i < w*h - 5)
-      continue;
+  for (int i = w*(h-1); i < w*h; i++) {
     std::cout << A[i] << " ";
     if ((i+1)%w ==0){
       std::cout <<"]\n";
@@ -372,14 +370,13 @@ int main(int argc, char **argv) {
 
 
 
-  int WA = 5;
+  int WC = 128;
+  int HC = 256;
   int WK = 3;
-  int HA = 5;
   int HK = 3;
-  int WC = WA;
-  int HC = HA;
-  WA = WA + WK - 1;
-  HA = HA + WK - 1;
+  int WA = WC + WK - 1;
+  int HA = HC + WK - 1;
+  
 
   // Setup CUDA environnement 
   cudaError_t error;
@@ -490,24 +487,33 @@ int main(int argc, char **argv) {
 
   print_array(h_A, WA, HA);
   conv(h_C, h_A, h_B, WK, WC, HC);
+  std::cout << " ================ CPU ===================" << std::endl;
   print_array(h_C, WC, HC);
 
   
-  threads = dim3(TW, TW);
-  grid = dim3(3, 3);
 
-  // conv_naive<<<grid, threads >>>(d_C, d_A, d_B, WK, WC, HC);
-  // gpuErrchk(cudaMemcpy(h_C, d_C, mem_size_C, cudaMemcpyDeviceToHost));
-  // print_array(h_C, WC, HC);
+  
+  threads = dim3(TW, TW);
+  int blocksX = WC / (TW - 2) + 1;
+  int blocksY = HC / (TW - 2) + 1;
+  grid = dim3(blocksX, blocksY);
+
+  conv_naive<<<grid, threads >>>(d_C, d_A, d_B, WK, WC, HC);
+  gpuErrchk(cudaMemcpy(h_C, d_C, mem_size_C, cudaMemcpyDeviceToHost));
+  std::cout << " ================ NAIVE ===================" << std::endl;
+  print_array(h_C, WC, HC);
+
+
 
   conv_tiled<<<grid, threads >>>(d_C, d_A, d_B, WK, WC, HC);
   gpuErrchk(cudaMemcpy(h_C, d_C, mem_size_C, cudaMemcpyDeviceToHost));
+  std::cout << " ================ TILED ===================" << std::endl;
   print_array(h_C, WC, HC);
-  std::cout << "ok";
 
-  // conv_tiled_shared<<<grid, threads >>>(d_C, d_A, d_B, WC, HC);
-  // gpuErrchk(cudaMemcpy(h_C, d_C, mem_size_C, cudaMemcpyDeviceToHost));
-  // print_array(h_C, WC, HC);
+  conv_tiled_shared<<<grid, threads >>>(d_C, d_A, d_B, WC, HC);
+  gpuErrchk(cudaMemcpy(h_C, d_C, mem_size_C, cudaMemcpyDeviceToHost));
+  std::cout << " ================ SHARED ===================" << std::endl;
+  print_array(h_C, WC, HC);
 
   gpuErrchk(cudaPeekAtLastError());
   
@@ -516,7 +522,6 @@ int main(int argc, char **argv) {
   cudaEventRecord(stop, NULL);
   cudaEventSynchronize(stop);
   cudaEventElapsedTime(&msecTotal, start, stop);
-  std::cout << "ok2";
 
   std::cout << std::endl;
 
