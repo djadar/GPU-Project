@@ -1,7 +1,6 @@
 // -----------------------------------------------------------------------------
-// * Name:       matrix_utils.h
+// * Name:       utils.h
 // * Purpose:    Provide a set of function to manipulate matrices 
-// * History:    Christophe Picard, Fall 2021
 // -----------------------------------------------------------------------------
 
 #pragma once
@@ -20,8 +19,7 @@
 #include <ctime>
 
 /// Only for checking
-#include "gemm_noblas.h"
-#include "gemm_blas.h"
+//#include "gemm_noblas.h"
 
 /// ----------------------------------------------------------------------------
 /// \fn void init_mat( int N, T *&A, T *&B)
@@ -41,50 +39,77 @@ template <typename T> void fill_random(T *&A, int N, int M) {
 }
 
 /// ----------------------------------------------------------------------------
-/// \fn void fill_zero( T *&A, int M, int N )
-/// \brief Set matrix coefficients to zero
-/// \param A Matrix to initialize 
-/// \param M Number of rows of the matrix
-/// \param N Number of columns of the matrix
+/// \fn void sobel_filter(int k, REAL *&A)
+/// \brief Function for creating a variable size sobel filter
+/// \param A Output sobel filter 
+/// \param k Size of the sobel filter (k*k)
 /// ----------------------------------------------------------------------------
-template <typename T> void fill_zero(T *&A, int M, int N) {
-  for (int i = 0; i < M; ++i) {
-    for (int j = 0; j < N; ++j) {
-      A[i * M + j] = T(0.0);
-    }
+
+void sobel_filter(int k, REAL *&A) {
+  float v, x_dist, y_dist;
+  for (int i = 0; i < k; i++) {
+      for (int j = 0; j < k; j++) {
+          if (j == floor(k/2)){
+              v = 0;
+          }
+          else {
+              y_dist = (i - floor(k/2));
+              x_dist = (j - floor(k/2));
+              v = x_dist / (x_dist * x_dist + y_dist * y_dist);
+          }
+          A[i * k + j] = v;
+      }
   }
 }
 
 /// ----------------------------------------------------------------------------
-/// \fn bool load_matrix(char * filename, T * &A, int &nx, int &ny) 
-/// \brief Read matrix from a file
-/// \param filename name of the file containing the matrix
-/// \param matrix store the loaded coefficient
-/// \param M number of rows of the matrix
-/// \param N nimber of columns of the matrix
+/// \fn void print_array(REAL *&A, int w, int h)
+/// \brief Print a 1D matrix in the terminal
+/// \param A Matrix 
+/// \param w Width of A
+/// \param h height of A
 /// ----------------------------------------------------------------------------
-template <typename T> bool load_matrix(char *filename, T *&A, int &M, int &N) {
-  std::string line;
-  std::ifstream infile(filename);
-
-  if (!infile.is_open()) {
-    std::cerr << "File not found: " << filename << std::endl;
-    std::exit(EXIT_FAILURE);
+void print_array(REAL *&A, int w, int h) {
+  std::cout << "[";
+  for (int i = 0; i < w*h; i++) {
+    if (i < w*h - 5)
+      continue;
+    std::cout << A[i] << " ";
+    if ((i+1)%w ==0){
+      std::cout <<"]\n";
+      std::cout << "[";
+    }
   }
+  std::cout <<"\n";
+}
 
-  // Load the size of the matrix
-  infile >> M >> N;
-
-  // Allocate memory for the matrix
-  A = new T[M * N];
-
-  // Load matrix coefficients
-  for (int i = 0; i < M * N; i++) {
-    infile >> A[i];
-  }
-
-  infile.close();
-  return 1;
+void conv_cpu(REAL *&out, REAL *&A, REAL *&K, int wK, int wA, int hA){
+    /* Calculate convolution on array A with a filter K sequentially on the CPU
+    * Parameters:
+    * REAL *&out    Output filtered array
+    * REAL *&A      Input array to be filtered
+    * REAL *&K      Used filter kernel for convolution
+    * int wK        Width of the filter kernel
+    * int wA        Width of the non-padded input array
+    * int hA        Height of the non-padded input array
+    */
+    float total = 0;
+    float elem = 0;
+    int w_pad = wA + wK - 1;
+    // Go through each pixel in the original array
+    for (int r = 0; r < hA; r++) {
+        for (int c = 0; c < wA; c++) {
+            total = 0;
+            // Go through each element in the kernel array
+            for (int x = 0; x < wK; x++) {
+                for (int y = 0; y < wK; y++) {
+                    elem = A[(r + y) * w_pad + c + x];
+                    total += elem * K[y * wK + x]; // Add to the total value for the output pixel
+                }
+            }
+            out[r * wA + c] = total;
+        }
+    }
 }
 
 /// ----------------------------------------------------------------------------
@@ -99,7 +124,7 @@ template<typename T>
 void check_result(T *&A, T *&B, T *&C, int M, int N, int K) {
   T *C_check = new T[M*N];
   std::cout<< " == Checking results against sequential CPU" <<std::endl;
-  gemm_cpu_blas_seq<T>(A, B, C_check, M, N, K);
+  gemm_cpu_noblas_seq<T>(A, B, C_check, M, N, K);
 
   // Comparing the different results
   // - maximum difference
@@ -151,17 +176,5 @@ void check_result(T *&A, T *&B, T *&C, int M, int N, int K) {
   }
 }
 
-/// ----------------------------------------------------------------------------
-/// \fn void trans( int N, T *&A, T *&B)
-/// \brief Perform transposition of a matrix
-/// \param N Size of the matrix
-/// \param A Matrix to transpose 
-/// \param B Transposed matrix 
-/// ----------------------------------------------------------------------------
-template<typename T>
-void transpose(T *&B, T *&Btrans, int M, int N) {
-  for (int i = 0; i < M; i++)
-    for (int j = 0; j < N; j++)
-      Btrans[j * N + i] = B[i * M + j];
-}
+
 

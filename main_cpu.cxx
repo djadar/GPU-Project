@@ -1,8 +1,7 @@
 
 // -----------------------------------------------------------------------------
 // * Name:       main_cpu.cxx
-// * Purpose:    Driver for matrix multiplication on CPU
-// * History:    Christophe Picard, Fall 2021
+// * Purpose:    Driver for matrix convolutional product on CPU
 // -----------------------------------------------------------------------------
 
 #include <chrono>
@@ -11,15 +10,10 @@
 
 // #include <typeinfo>
 
-// Parsing command line options using cxxopts 
-// https://github.com/jarro2783/cxxopts.git
 #include "args.hxx"
 
-#include "gemm_blas.h"
-#include "matrix_utils.h"
-
-/// Define size of matrices
-#define SIZE 512 
+//#include "gemm_noblas.h"
+#include "utils.h"
 
 /*----------------------------------------------------------------------------*/
 /* Floating point datatype and op                                             */
@@ -35,21 +29,19 @@ typedef float REAL;
 /* Toplevel function.                                                         */
 /*----------------------------------------------------------------------------*/
 int main(int argc, char *argv[]) {
-  std::cout << "[Matrix Multiply Using CPU]" << std::endl;
+  std::cout << "[Edge detection Using CPU]" << std::endl;
 
   // Define parser 
   args::ArgumentParser parser("gemm_cpu", "Matrix Multiply using CPU");
 
   // Set parser value
   args::HelpFlag help(parser, "help", "Display this help menu", {'h', "help"});
-  args::ValueFlag<int> widthA(parser, "widthA", "Width of matrix A", {"wA"},
+  args::ValueFlag<int> widthC(parser, "widthC", "Width of output matrix C", {"WC"},
                               256);
-  args::ValueFlag<int> heightA(parser, "heightA", "Height of matrix A", {"hA"},
+  args::ValueFlag<int> heightA(parser, "heightC", "Height of output matrix C", {"HC"},
                                256);
-  args::ValueFlag<int> widthB(parser, "widthB", "Width of matrix B", {"wB"},
-                              256);
-  args::ValueFlag<int> heightB(parser, "heightB", "Height of matrix B", {"hB"},
-                               256);
+  args::ValueFlag<int> widthK(parser, "widthB", "Width of kernel matrix K", {"WK"},
+                              3);
 
   // Invoke parser
   try {
@@ -69,51 +61,54 @@ int main(int argc, char *argv[]) {
 
   // Initialize matrix dimensions
   int WA, WB, HA, HB, WC, HC;
-  WA = args::get(widthA);
-  WB = args::get(widthB);
-  HA = args::get(heightA);
-  HB = args::get(heightB);
+  WC = args::get(widthC);
+  HC = args::get(heightC);
+  WK = args::get(widthK);
+  WA = WC + WK -1 ;
+  HA = HC + WK -1;
 
-  // Initialisation 
-  int M = WA;
-  int N = HA;
-  int K = WB;
+  // Initialisation of matrix input and the kernel
+  REAL *h_K = new REAL[WK*WK];
+  sobel_filter(WK, h_K);
 
-  REAL *A = new REAL[M*K];
-  REAL *B = new REAL[K*N];
+  // allocate host memory for the result
+  float *h_C = new float[WC*HC];
 
-  fill_random<REAL>(A, M, K);
-  fill_random<REAL>(B, K, N);
-  REAL *C = new REAL[M*N];
-  REAL *TB = new REAL[N*K];
-  fill_zero<REAL>(C, M, N);
-
-
-  // Matrix product computation
-  std::cout << " Product of two matrices of float"
-            << " of size " << M << "x" << K << " and " << K << "x" << N
+  // --- Begin calculations ---
+ 
+  // Run CPU convolution
+  std::cout << " CPU convolution of matrice output"
+            << " of size " << WC << "x" << HC << " with a Sobel Filter of size " << WK << "x" << WK
             << std::endl;
 
   std::cout << " == Computation starts..." << std::endl;
 
   auto start = std::chrono::system_clock::now();
 
-  gemm_cpu_noblas_seq<REAL>(A, B, C, M, N, K); 
+  // Print kernel and input
+  print_array(h_K, WK, WK);
+  print_array(h_A, WA, HA);
+  
+  conv_cpu(h_C, h_A, h_K, WK, WC, HC);
   
   auto elapse = std::chrono::system_clock::now() - start;
   auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(elapse);
 
+  // Print output
+  print_array(h_C, WC, HC);
+
   /* Performance computation, results and performance printing ------------ */
-  auto flop = 2 * float(M) * float(N) * float(K) ;
+  auto flop = 2 * M * N * K ;
 
   std::cout << " == Performances " << std::endl;
   std::cout << "\t Processing time: " << duration.count() << " (ms)"
             << std::endl;
   std::cout << "\t GFLOPS: " << flop / duration.count() / 1e+6 << std::endl;
 
-  if (check_out)
+  /*if (check_out)
     check_result<REAL>(A, B, C, M, N, K); // Res checking
-
-  /* End of the parallel program ------------------------------------------ */
+*/
+  free(h_C);
+  /* End of the sequential program ------------------------------------------ */
   return (EXIT_SUCCESS);
 }
