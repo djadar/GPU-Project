@@ -48,7 +48,7 @@ int main(int argc, char **argv) {
                               3);
   args::ValueFlag<int> choice(parser, "choice", "Choose the way of doing the calculation
   1 : conv_naive ; 2: conv_tiled ; 3: conv_shared
-  ", {"WK"},
+  ", {"choice"},
                               3);
   // Invoke parser
   try {
@@ -139,8 +139,9 @@ int main(int argc, char **argv) {
   // setup execution parameters
   dim3 threads, grid;
   threads = dim3(TW, TW);
-  int blocksX = WC / (TW - 2) + 1;
-  int blocksY = HC / (TW - 2) + 1;
+  
+  int blocksX = WC / (TW - WK -1) + 1;
+  int blocksY = HC / (TW - WK -1) + 1;
   grid = dim3(blocksX, blocksY);
 
 
