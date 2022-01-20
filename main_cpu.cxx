@@ -29,16 +29,16 @@ typedef float REAL;
 /* Toplevel function.                                                         */
 /*----------------------------------------------------------------------------*/
 int main(int argc, char *argv[]) {
-  std::cout << "[Edge detection Using CPU]" << std::endl;
+  std::cout << "[Matrix Convolutional Product Using CPU]" << std::endl;
 
   // Define parser 
-  args::ArgumentParser parser("gemm_cpu", "Matrix Multiply using CPU");
+  args::ArgumentParser parser("edge_cpu", "Matrix Convolutional Product Using CPU");
 
   // Set parser value
   args::HelpFlag help(parser, "help", "Display this help menu", {'h', "help"});
   args::ValueFlag<int> widthC(parser, "widthC", "Width of output matrix C", {"WC"},
                               256);
-  args::ValueFlag<int> heightA(parser, "heightC", "Height of output matrix C", {"HC"},
+  args::ValueFlag<int> heightC(parser, "heightC", "Height of output matrix C", {"HC"},
                                256);
   args::ValueFlag<int> widthK(parser, "widthB", "Width of kernel matrix K", {"WK"},
                               3);
@@ -60,7 +60,7 @@ int main(int argc, char *argv[]) {
   }
 
   // Initialize matrix dimensions
-  int WA, WB, HA, HB, WC, HC;
+  int WA, HA, WC, HC, WK;
   WC = args::get(widthC);
   HC = args::get(heightC);
   WK = args::get(widthK);
@@ -68,6 +68,9 @@ int main(int argc, char *argv[]) {
   HA = HC + WK -1;
 
   // Initialisation of matrix input and the kernel
+  float *h_A = new REAL[WA*HA];
+  fill_random<REAL>(h_A, WA, HA);
+
   REAL *h_K = new REAL[WK*WK];
   sobel_filter(WK, h_K);
 
@@ -83,25 +86,25 @@ int main(int argc, char *argv[]) {
 
   std::cout << " == Computation starts..." << std::endl;
 
-  auto start = std::chrono::system_clock::now();
-
   // Print kernel and input
   print_array(h_K, WK, WK);
   print_array(h_A, WA, HA);
   
+  auto start = std::chrono::system_clock::now();
+  
   conv_cpu(h_C, h_A, h_K, WK, WC, HC);
   
   auto elapse = std::chrono::system_clock::now() - start;
-  auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(elapse);
+  auto duration = std::chrono::duration_cast<std::chrono::microseconds>(elapse);
 
   // Print output
   print_array(h_C, WC, HC);
 
   /* Performance computation, results and performance printing ------------ */
-  auto flop = 2 * M * N * K ;
+  auto flop = 2 * WA * HA * WK ;
 
   std::cout << " == Performances " << std::endl;
-  std::cout << "\t Processing time: " << duration.count() << " (ms)"
+  std::cout << "\t Processing time: " << duration.count() << " (µs)"
             << std::endl;
   std::cout << "\t GFLOPS: " << flop / duration.count() / 1e+6 << std::endl;
 

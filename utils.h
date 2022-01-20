@@ -18,6 +18,11 @@
 #include <random>
 #include <ctime>
 
+#ifdef DP
+typedef double REAL;
+#else
+typedef float REAL;
+#endif
 /// Only for checking
 //#include "gemm_noblas.h"
 
@@ -110,70 +115,6 @@ void conv_cpu(REAL *&out, REAL *&A, REAL *&K, int wK, int wA, int hA){
             out[r * wA + c] = total;
         }
     }
-}
-
-/// ----------------------------------------------------------------------------
-/// \fn void check_result( int N, T *&A, T *&B, T *&C)
-/// \brief Check the correcteness of the computation
-/// \param N Size of the matrix
-/// \param A First matrix in the product
-/// \param B Second matrix in the product
-/// \param C Output matrix
-/// ----------------------------------------------------------------------------
-template<typename T>
-void check_result(T *&A, T *&B, T *&C, int M, int N, int K) {
-  T *C_check = new T[M*N];
-  std::cout<< " == Checking results against sequential CPU" <<std::endl;
-  gemm_cpu_noblas_seq<T>(A, B, C_check, M, N, K);
-
-  // Comparing the different results
-  // - maximum difference
-  double max_diff = 0.0;
-  // - position with the largest relative difference
-  int max_X = 0;
-  int max_Y = 0;
-  // - epsilon for relative differences
-  auto epsilon = std::pow(10.,2-(std::numeric_limits<T>::digits10));
-
-  // - number of cases where the error is too large
-  int cases = 0;
-
-  for (int i = 0; i < M; ++i) {
-    for (int j = 0; j < N; ++j) {
-      // difference between results
-      auto diff = fabs(C[i * M + j] - C_check[i * M + j]);
-      auto standard = fabs(C_check[i * M + j]);
-
-      // Checks if the difference is large with respect to number representation.
-      if (diff > standard * epsilon) {
-        ++cases; // Register the case
-      }
-      // Store the largest difference seen so far
-      if (diff > standard * max_diff) {
-        max_diff = diff / standard;
-        max_X = i;
-        max_Y = j;
-      }
-    }
-  }
-
-  if (cases == 0) {
-    std::cout << "\t The results are correct for " << typeid(A).name()
-              << " with a precision of " << epsilon << std::endl;
-    std::cout << "\t Maximum relative difference encountered: " << max_diff
-              << std::endl;
-  } else {
-    std::cout << "*** WARNING ***" << std::endl;
-    std::cout << "\t The results are incorrect for float" << " "
-              << " with a precision of " << epsilon << std::endl;
-    std::cout << "\t Number of cell with imprecise results: " << cases
-              << std::endl;
-    std::cout << "\t Cell C[" << max_X << "][" << max_Y
-              << "] contained the largest relative difference of " << max_diff
-              << std::endl;
-    std::cout<< "\t Expected value:<" <<C_check[max_X*N + max_Y]<<std::endl;
-    std::cout<< "\t Computed value: " <<C[max_X*N + max_Y]<<std::endl;
-  }
 }
 
 

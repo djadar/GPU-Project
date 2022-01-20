@@ -22,7 +22,11 @@
 
 
 // Constants
-#define REAL float
+#ifdef DP
+typedef double REAL;
+#else
+typedef float REAL;
+#endif
 #define BLOCK_SIZE 32
 #define TW 32
 #define WIDTH_K 3
@@ -35,7 +39,7 @@ int main(int argc, char **argv) {
   std::cout << "[Matrix Convolutional Product Using CUDA] - Starting..." << std::endl;
 
   // Define parser 
-  args::ArgumentParser parser("gemm_cuda", "Matrix Multiply using CUDA");
+  args::ArgumentParser parser("edge_cuda", "Matrix Convolutional Product Using CUDA");
 
   // Set parser value
   // Set parser value
