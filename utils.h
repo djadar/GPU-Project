@@ -18,11 +18,7 @@
 #include <random>
 #include <ctime>
 
-#ifdef DP
-typedef double REAL;
-#else
-typedef float REAL;
-#endif
+#define REAL float
 /// Only for checking
 //#include "gemm_noblas.h"
 

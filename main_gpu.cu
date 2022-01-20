@@ -18,18 +18,12 @@
 // Define different convolution kernel
 #include <conv_naive.cuh>
 #include <conv_shared.cuh>
-#include <conv_tiled.cuh>
 
 
 // Constants
-#ifdef DP
-typedef double REAL;
-#else
-typedef float REAL;
-#endif
+#define REAL float
 
-//#define TW 32
-//#define WIDTH_K 3
+#define WIDTH_K 3
 
 ///
 /// Top level driver
@@ -51,7 +45,7 @@ int main(int argc, char **argv) {
   args::ValueFlag<int> widthK(parser, "widthB", "Width of kernel matrix K", {"WK"},
                               3);
   args::ValueFlag<int> choice(parser, "choice", "Choose the way of doing the calculation 1 : conv_naive ; 2: conv_tiled ; 3: conv_shared", {"choice"},
-                              3);
+                              1);
   // Invoke parser
   try {
     parser.ParseCLI(argc, argv);
@@ -130,10 +124,7 @@ int main(int argc, char **argv) {
   cudaMalloc((void **)&d_K, mem_size_K);
   float *d_C;
   cudaMalloc((void **)&d_C, mem_size_C);
-  // copy host memory to device
-  cudaMemcpy(d_A, h_A, mem_size_A, cudaMemcpyHostToDevice);
-  cudaMemcpy(d_K, h_K, mem_size_K, cudaMemcpyHostToDevice);
-
+  
 
   // --- Begin calculations ---
 
@@ -142,50 +133,59 @@ int main(int argc, char **argv) {
   dim3 threads, grid;
   threads = dim3(TW, TW);
   
-  int blocksX = WC / (TW - WK -1) + 1;
-  int blocksY = HC / (TW - WK -1) + 1;
-  grid = dim3(blocksX, blocksY);
-
+  // Print kernel and input
+  print_array(h_K, WK, WK);
+  print_array(h_A, WA, HA);
 
   // create and start timer
   cudaEventCreate(&start);
   cudaEventRecord(start, NULL);
 
+  // copy host memory to device
+  cudaMemcpy(d_A, h_A, mem_size_A, cudaMemcpyHostToDevice);
+  cudaMemcpy(d_K, h_K, mem_size_K, cudaMemcpyHostToDevice);
+
   // Run GPU convolutions
-  switch (n){
-    case 1:{
-        conv_naive<<<grid, threads >>>(d_C, d_A, d_K, WK, WC, HC);
-        std::cout << " ================ NAIVE ===================" << std::endl;
-    }
-    case 2:{
-      conv_tiled<<<grid, threads >>>(d_C, d_A, d_K, WK, WC, HC);
-      std::cout << " ================ TILED ===================" << std::endl;
-    }
-    case 3:{
+  if (n==1){
+      int blocksX = WC / (TW) + 1;
+      int blocksY = HC / (TW) + 1;
+      grid = dim3(blocksX, blocksY);
+      conv_naive<<<grid, threads >>>(d_C, d_A, d_K, WK, WC, HC);
+      std::cout << " ================ NAIVE ===================" << std::endl;
+    }else if (n==2){
+      int blocksX = WC / (TW - WK + 1) + 1;
+      int blocksY = HC / (TW - WK + 1) + 1;
+      grid = dim3(blocksX, blocksY);
       conv_shared<<<grid, threads >>>(d_C, d_A, d_K, WC, HC);
       std::cout << " ================ SHARED ===================" << std::endl;
     }
-  }
- 
+  cudaMemcpy(h_C, d_C, mem_size_C, cudaMemcpyDeviceToHost);
+
   // stop and destroy timer
   cudaEventCreate(&stop);
   cudaEventRecord(stop, NULL);
   cudaEventSynchronize(stop);
+
   
-  // copy result from device to host
-  cudaMemcpy(h_C, d_C, mem_size_C, cudaMemcpyDeviceToHost);
 
   //Print output
   print_array(h_C, WC, HC);  
-   
+  
   // Performance computation, results and performance printing
   cudaEventElapsedTime(&msecTotal, start, stop);
-  auto flop = 2 * (float)WC * (float)HC * (float)WA;
-
+  auto flop = 2 * (float)WC * (float)HC * (float)WK * (float)WK;
+  int microsecond = msecTotal * 1000;
   std::cout << " == Performances " << std::endl;
-  std::cout << "\t Processing time: " << msecTotal << " (ms)"
+  std::cout << "\t Processing time: " << microsecond << " (µs)"
             << std::endl;
-  std::cout << "\t GFLOPS: " << flop / msecTotal / 1e+6 << std::endl;
+  std::cout << "\t GFLOPS: " << flop / microsecond / 1e+3 << std::endl;
+
+	cudaFree( d_A );
+	cudaFree( d_K );
+	cudaFree( d_C );
+  free(h_A);
+  free(h_K);
+  free(h_C);
 
   return (EXIT_SUCCESS);
 }

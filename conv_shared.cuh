@@ -1,9 +1,9 @@
-#define TW 32
+#define TW 16
 #define WIDTH_K 3
 
-
+#define REAL float
 __global__ void
-conv_shared( float* out, float* A, float* K, int wA, int hA)
+conv_shared( REAL* out, REAL* A, REAL* K, int wA, int hA)
 {
   /*
   Function that calculates the convolution between an array array and filter B.

@@ -1,7 +1,7 @@
-#define TW 32
+#define REAL float
 
 __global__ void
-conv_naive( float* out, float* A, float* K, int wK, int wA, int hA)
+conv_naive( REAL* out, REAL* A, REAL* K, int wK, int wA, int hA)
 {
   /* Naive function for calculating convolution between array and 
   * 2D kernel. In future requires tiling the image and the kernel 

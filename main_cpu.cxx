@@ -18,11 +18,7 @@
 /*----------------------------------------------------------------------------*/
 /* Floating point datatype and op                                             */
 /*----------------------------------------------------------------------------*/
-#ifdef DP
-typedef double REAL;
-#else
-typedef float REAL;
-#endif
+#define REAL float
 #define check_out 1
 
 /*----------------------------------------------------------------------------*/
@@ -101,12 +97,12 @@ int main(int argc, char *argv[]) {
   print_array(h_C, WC, HC);
 
   /* Performance computation, results and performance printing ------------ */
-  auto flop = 2 * WA * HA * WK ;
+  auto flop = 2 * WC * HC * WK * WK ;
 
   std::cout << " == Performances " << std::endl;
   std::cout << "\t Processing time: " << duration.count() << " (µs)"
             << std::endl;
-  std::cout << "\t GFLOPS: " << flop / duration.count() / 1e+6 << std::endl;
+  std::cout << "\t GFLOPS: " << flop / duration.count() / 1e+3 << std::endl;
 
   /*if (check_out)
     check_result<REAL>(A, B, C, M, N, K); // Res checking
