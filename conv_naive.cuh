@@ -1,4 +1,4 @@
-
+#define TW 32
 
 __global__ void
 conv_naive( float* out, float* A, float* K, int wK, int wA, int hA)

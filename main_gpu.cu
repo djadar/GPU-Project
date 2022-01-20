@@ -27,9 +27,9 @@ typedef double REAL;
 #else
 typedef float REAL;
 #endif
-#define BLOCK_SIZE 32
-#define TW 32
-#define WIDTH_K 3
+
+//#define TW 32
+//#define WIDTH_K 3
 
 ///
 /// Top level driver
@@ -46,13 +46,11 @@ int main(int argc, char **argv) {
   args::HelpFlag help(parser, "help", "Display this help menu", {'h', "help"});
   args::ValueFlag<int> widthC(parser, "widthC", "Width of output matrix C", {"WC"},
                               256);
-  args::ValueFlag<int> heightA(parser, "heightC", "Height of output matrix C", {"HC"},
+  args::ValueFlag<int> heightC(parser, "heightC", "Height of output matrix C", {"HC"},
                                256);
   args::ValueFlag<int> widthK(parser, "widthB", "Width of kernel matrix K", {"WK"},
                               3);
-  args::ValueFlag<int> choice(parser, "choice", "Choose the way of doing the calculation
-  1 : conv_naive ; 2: conv_tiled ; 3: conv_shared
-  ", {"choice"},
+  args::ValueFlag<int> choice(parser, "choice", "Choose the way of doing the calculation 1 : conv_naive ; 2: conv_tiled ; 3: conv_shared", {"choice"},
                               3);
   // Invoke parser
   try {
@@ -67,7 +65,7 @@ int main(int argc, char **argv) {
   } catch (args::ValidationError e) {
     std::cerr << e.what() << std::endl;
     std::cerr << parser;
-    return 1;
+    return 1;}
   /*}catch (args::get(choice) !=1 ||args::get(choice) !=2 || args::get(choice) !=3) {
     std::cerr << e.what() << std::endl;
     std::cerr << parser;
@@ -75,7 +73,7 @@ int main(int argc, char **argv) {
 
   int n = args::get(choice);
   // Initialize matrix dimensions
-  int WA, WB, HA, HB, WC, HC;
+  int WA, WK, HA, WC, HC;
   WC = args::get(widthC);
   HC = args::get(heightC);
   WK = args::get(widthK);
@@ -127,11 +125,11 @@ int main(int argc, char **argv) {
  
   // allocate device memory
   float *d_A;
-  gpuErrchk(cudaMalloc((void **)&d_A, mem_size_A));
+  cudaMalloc((void **)&d_A, mem_size_A);
   float *d_K;
-  gpuErrchk(cudaMalloc((void **)&d_K, mem_size_K));
+  cudaMalloc((void **)&d_K, mem_size_K);
   float *d_C;
-  gpuErrchk(cudaMalloc((void **)&d_C, mem_size_C));
+  cudaMalloc((void **)&d_C, mem_size_C);
   // copy host memory to device
   cudaMemcpy(d_A, h_A, mem_size_A, cudaMemcpyHostToDevice);
   cudaMemcpy(d_K, h_K, mem_size_K, cudaMemcpyHostToDevice);
@@ -164,7 +162,7 @@ int main(int argc, char **argv) {
       std::cout << " ================ TILED ===================" << std::endl;
     }
     case 3:{
-      conv_tiled_shared<<<grid, threads >>>(d_C, d_A, d_K, WC, HC);
+      conv_shared<<<grid, threads >>>(d_C, d_A, d_K, WC, HC);
       std::cout << " ================ SHARED ===================" << std::endl;
     }
   }

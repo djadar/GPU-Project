@@ -1,3 +1,4 @@
+#define TW 32
 
 
 __global__ void

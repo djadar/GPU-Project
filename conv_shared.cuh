@@ -1,3 +1,5 @@
+#define TW 32
+#define WIDTH_K 3
 
 
 __global__ void
