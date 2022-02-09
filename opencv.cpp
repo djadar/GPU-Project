@@ -1,3 +1,9 @@
+
+// -----------------------------------------------------------------------------
+// * Name:       opencv.cpp
+// * Purpose:    Testing edge detection filtering with opencv images
+// -----------------------------------------------------------------------------
+
 #include <opencv2/highgui.hpp>
 #include <opencv2/core/core.hpp>
 #include <opencv2/highgui/highgui.hpp>
@@ -54,7 +60,7 @@ void conv(REAL *&frameArray, REAL *&array, int * size, REAL *&kernel, int k, REA
     array_padding(frameArray, array, k/2, size[0], size[1]);
     float total = 0;
     float elem = 0;
-    int w_pad = size[1] + 2 * (k/2);
+    int w_pad = size[1] + k - 1;
     // Go through each pixel in the original array
     for (int r = 0; r < size[0]; r++) {
         for (int c = 0; c < size[1]; c++) {
@@ -63,17 +69,17 @@ void conv(REAL *&frameArray, REAL *&array, int * size, REAL *&kernel, int k, REA
             for (int x = 0; x < k; x++) {
                 for (int y = 0; y < k; y++) {
                     elem = array[(r + y) * w_pad + c + x];
-                    total += elem * kernel[x * k + y]; // Add to the total value for the output pixel
+                    total += elem * kernel[y * k + x]; // Add to the total value for the output pixel
                 }
             }
             out[r * size[1] + c] = total;
         }
     }
 }
-int get_image(char* name, REAL *&frameArray, int *size ){        
 
+void save_result(char* name, REAL *&frameArray, int *size ){
     cv::Mat image ;             // input image
-    image = cv::imread(name, CV_LOAD_IMAGE_GRAYSCALE);
+    image = cv::imread(name, cv::IMREAD_GRAYSCALE);
 
     int numCols = size[1];
     int numRows = size[0];
@@ -95,25 +101,21 @@ int get_image(char* name, REAL *&frameArray, int *size ){
     }
     std::cout <<" \n" << std::endl;
 
-    cv::imshow( "Final", image );
-    cv::waitKey(0);
+    cv::imwrite("result_image.jpg", image);
 }
 
 int main( int argc, char** argv ) {
 
-    char* name = "opencv_testimage.jpg";
-    char* name2 = "bitmoji.png";
+    char* name = "smiley.jpg";
 
     int *size = (int *)malloc(sizeof(int)*2);
     cv::Mat image;
-    image = cv::imread(name, CV_LOAD_IMAGE_GRAYSCALE);
+    image = cv::imread(name, cv::IMREAD_GRAYSCALE);
 
     if(! image.data ) {
         std::cout <<  "Image not found or unable to open" << std::endl ;
         return -1;
     }
-    cv::namedWindow( "mes images", cv::WINDOW_AUTOSIZE );
-    cv::imshow( "Initial", image );
     int numCols = image.cols;
     int numRows = image.rows;
 
@@ -128,7 +130,6 @@ int main( int argc, char** argv ) {
     size[0] = numCols;
     size[1] = numRows;
 
-
     //kernel
     int k = 3;
     int pad = floor(k / 2);
@@ -140,7 +141,7 @@ int main( int argc, char** argv ) {
     REAL *out = new REAL[size[0]*size[1]];
     conv(frameArray, array, size, kernel, k, out);
 
-    int n = get_image(name, out, size);
+    save_result(name, out, size);
 
     return 0;
 }
