@@ -44,7 +44,7 @@ int main(int argc, char **argv) {
                                256);
   args::ValueFlag<int> widthK(parser, "widthB", "Width of kernel matrix K", {"WK"},
                               3);
-  args::ValueFlag<int> choice(parser, "choice", "Choose the way of doing the calculation 1 : conv_naive ; 2: conv_tiled ; 3: conv_shared", {"choice"},
+  args::ValueFlag<int> choice(parser, "choice", "Choose the way of doing the calculation 1 : conv_naive ; 2: conv_tiled_shared", {"choice"},
                               1);
   // Invoke parser
   try {

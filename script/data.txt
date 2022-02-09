@@ -1,0 +1,215 @@
+Size: 128
+kernel: 3
+[Matrix Convolutional Product Using CPU]
+ CPU convolution of matrice output of size 128x128 with a Sobel Filter of size 3x3
+ == Computation starts...
+[0 1 ]
+[-0.5 0 0.5 ]
+[
+[0.00195406 0.584451 0.668468 0.90369 0.593863 ]
+[
+[0.757764 0.358721 0.0264938 -0.492337 -0.167741 ]
+[
+ == Performances 
+Time: 629 (µs)
+	 GFLOPS: 0.468
+Size: 128
+kernel: 5
+[Matrix Convolutional Product Using CPU]
+ CPU convolution of matrice output of size 128x128 with a Sobel Filter of size 5x5
+ == Computation starts...
+[-0.25 -0.2 0 0.2 0.25 ]
+[
+[0.930178 0.626279 0.95655 0.529209 0.260825 ]
+[
+[-0.454823 -0.0681015 0.00730599 -0.276286 -0.425909 ]
+[
+ == Performances 
+Time: 1434 (µs)
+	 GFLOPS: 0.571
+Size: 128
+kernel: 7
+[Matrix Convolutional Product Using CPU]
+ CPU convolution of matrice output of size 128x128 with a Sobel Filter of size 7x7
+ == Computation starts...
+[-0.1 0 0.1 0.153846 0.166667 ]
+[
+[0.00809495 0.272984 0.244877 0.165583 0.911181 ]
+[
+[0.416255 -0.187124 -0.729899 -0.389831 0.741534 ]
+[
+ == Performances 
+Time: 3368 (µs)
+	 GFLOPS: 0.476
+Size: 256
+kernel: 3
+[Matrix Convolutional Product Using CPU]
+ CPU convolution of matrice output of size 256x256 with a Sobel Filter of size 3x3
+ == Computation starts...
+[0 1 ]
+[-0.5 0 0.5 ]
+[
+[0.799418 0.808536 0.676491 0.454024 0.0884971 ]
+[
+[0.76865 -0.570018 -0.750335 0.38782 0.33333 ]
+[
+ == Performances 
+Time: 2282 (µs)
+	 GFLOPS: 0.516
+Size: 256
+kernel: 5
+[Matrix Convolutional Product Using CPU]
+ CPU convolution of matrice output of size 256x256 with a Sobel Filter of size 5x5
+ == Computation starts...
+[-0.25 -0.2 0 0.2 0.25 ]
+[
+[0.934871 0.422242 0.661573 0.903064 0.746731 ]
+[
+[0.119174 0.0658521 -0.513879 0.0226255 1.0816 ]
+[
+ == Performances 
+Time: 5929 (µs)
+	 GFLOPS: 0.552
+Size: 256
+kernel: 7
+[Matrix Convolutional Product Using CPU]
+ CPU convolution of matrice output of size 256x256 with a Sobel Filter of size 7x7
+ == Computation starts...
+[-0.1 0 0.1 0.153846 0.166667 ]
+[
+[0.193442 0.596412 0.416276 0.364658 0.645828 ]
+[
+[0.0842667 -0.392713 -1.27006 -1.34883 -0.188103 ]
+[
+ == Performances 
+Time: 10890 (µs)
+	 GFLOPS: 0.589
+Size: 512
+kernel: 3
+[Matrix Convolutional Product Using CPU]
+ CPU convolution of matrice output of size 512x512 with a Sobel Filter of size 3x3
+ == Computation starts...
+[0 1 ]
+[-0.5 0 0.5 ]
+[
+[0.446761 0.135755 0.479651 0.0285827 0.500117 ]
+[
+[-0.515494 -0.52552 0.656347 0.546801 -0.510953 ]
+[
+ == Performances 
+Time: 13130 (µs)
+	 GFLOPS: 0.359
+Size: 512
+kernel: 5
+[Matrix Convolutional Product Using CPU]
+ CPU convolution of matrice output of size 512x512 with a Sobel Filter of size 5x5
+ == Computation starts...
+[-0.25 -0.2 0 0.2 0.25 ]
+[
+[0.837433 0.301574 0.114806 0.839871 0.432636 ]
+[
+[-0.988976 -0.1232 0.916112 0.987971 -0.258192 ]
+[
+ == Performances 
+Time: 24130 (µs)
+	 GFLOPS: 0.543
+Size: 512
+kernel: 7
+[Matrix Convolutional Product Using CPU]
+ CPU convolution of matrice output of size 512x512 with a Sobel Filter of size 7x7
+ == Computation starts...
+[-0.1 0 0.1 0.153846 0.166667 ]
+[
+[0.246082 0.772127 0.969644 0.193004 0.135744 ]
+[
+[-0.715637 -0.327156 0.237003 -0.105481 0.251417 ]
+[
+ == Performances 
+Time: 42777 (µs)
+	 GFLOPS: 0.6
+Size: 1024
+kernel: 3
+[Matrix Convolutional Product Using CPU]
+ CPU convolution of matrice output of size 1024x1024 with a Sobel Filter of size 3x3
+ == Computation starts...
+[0 1 ]
+[-0.5 0 0.5 ]
+[
+[0.682664 0.512251 0.611551 0.539963 0.32209 ]
+[
+[0.87822 -0.201264 -0.0848638 -0.0813918 -0.936388 ]
+[
+ == Performances 
+Time: 36098 (µs)
+	 GFLOPS: 0.522
+Size: 1024
+kernel: 5
+[Matrix Convolutional Product Using CPU]
+ CPU convolution of matrice output of size 1024x1024 with a Sobel Filter of size 5x5
+ == Computation starts...
+[-0.25 -0.2 0 0.2 0.25 ]
+[
+[0.67472 0.365378 0.979726 0.982928 0.970194 ]
+[
+[-0.188494 0.756276 0.515758 -0.403445 -0.197757 ]
+[
+ == Performances 
+Time: 89567 (µs)
+	 GFLOPS: 0.585
+Size: 1024
+kernel: 7
+[Matrix Convolutional Product Using CPU]
+ CPU convolution of matrice output of size 1024x1024 with a Sobel Filter of size 7x7
+ == Computation starts...
+[-0.1 0 0.1 0.153846 0.166667 ]
+[
+[0.159126 0.87756 0.464132 0.893769 0.779888 ]
+[
+[-1.2055 -0.870146 -0.370472 -0.367879 -0.490265 ]
+[
+ == Performances 
+Time: 168805 (µs)
+	 GFLOPS: 0.608
+Size: 2048
+kernel: 3
+[Matrix Convolutional Product Using CPU]
+ CPU convolution of matrice output of size 2048x2048 with a Sobel Filter of size 3x3
+ == Computation starts...
+[0 1 ]
+[-0.5 0 0.5 ]
+[
+[0.19385 0.95526 0.906991 0.96492 0.504514 ]
+[
+[0.234057 0.536906 0.403125 -0.355767 -0.139996 ]
+[
+ == Performances 
+Time: 142490 (µs)
+	 GFLOPS: 0.529
+Size: 2048
+kernel: 5
+[Matrix Convolutional Product Using CPU]
+ CPU convolution of matrice output of size 2048x2048 with a Sobel Filter of size 5x5
+ == Computation starts...
+[-0.25 -0.2 0 0.2 0.25 ]
+[
+[0.888066 0.142174 0.676782 0.115354 0.929401 ]
+[
+[-0.981201 -0.67776 0.716136 0.886761 -0.169373 ]
+[
+ == Performances 
+Time: 360465 (µs)
+	 GFLOPS: 0.581
+Size: 2048
+kernel: 7
+[Matrix Convolutional Product Using CPU]
+ CPU convolution of matrice output of size 2048x2048 with a Sobel Filter of size 7x7
+ == Computation starts...
+[-0.1 0 0.1 0.153846 0.166667 ]
+[
+[0.587946 0.72318 0.626536 0.990159 0.204082 ]
+[
+[-0.133111 -1.21703 -0.999788 0.0551422 1.24197 ]
+[
+ == Performances 
+Time: 675353 (µs)
+	 GFLOPS: 0.608
