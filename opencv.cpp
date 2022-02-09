@@ -11,6 +11,7 @@
 #include "opencv2/opencv.hpp"
 #include <iostream>
 #include <vector>
+#include "args.hxx"
 
 #ifdef DP
 typedef double REAL;
@@ -77,7 +78,7 @@ void conv(REAL *&frameArray, REAL *&array, int * size, REAL *&kernel, int k, REA
     }
 }
 
-void save_result(char* name, REAL *&frameArray, int *size ){
+void save_result(char* name, REAL *&frameArray, int *size){
     cv::Mat image ;             // input image
     image = cv::imread(name, cv::IMREAD_GRAYSCALE);
 
@@ -99,14 +100,44 @@ void save_result(char* name, REAL *&frameArray, int *size ){
             image.at<uchar>(x, y) = frameArray[x * numCols + y];
         }
     }
-    std::cout <<" \n" << std::endl;
 
     cv::imwrite("result_image.jpg", image);
+    std::cout << "Processing ready. Result saved in `result_image.jpg`" << std::endl;
 }
 
 int main( int argc, char** argv ) {
 
-    char* name = "smiley.jpg";
+    std::cout << "[Matrix Convolutional Product Using CPU on a given image]" << std::endl;
+
+    // Define parser 
+    args::ArgumentParser parser("edge_cpu", "Matrix Convolutional Product Using CPU");
+
+    // Set parser value
+    args::HelpFlag help(parser, "help", "Display this help menu", {'h', "help"});
+    args::ValueFlag<char*> imageIn(parser, "imageIn", "Filename of the input image", {"i"},
+                                   "smiley.jpg");
+    args::ValueFlag<int> widthK(parser, "widthK", "Width of kernel matrix K", {"k"},
+                                3);
+
+    // Invoke parser
+    try {
+        parser.ParseCLI(argc, argv);
+    } catch (args::Help) {
+        std::cout << parser;
+        return 0;
+    } catch (args::ParseError e) {
+        std::cerr << e.what() << std::endl;
+        std::cerr << parser;
+        return 1;
+    } catch (args::ValidationError e) {
+        std::cerr << e.what() << std::endl;
+        std::cerr << parser;
+        return 1;
+    }
+
+    // Initialize matrix dimensions
+    char* name = args::get(imageIn);
+    int k = args::get(widthK);
 
     int *size = (int *)malloc(sizeof(int)*2);
     cv::Mat image;
@@ -131,8 +162,6 @@ int main( int argc, char** argv ) {
     size[1] = numRows;
 
     //kernel
-    int k = 3;
-    int pad = floor(k / 2);
     REAL *kernel = new REAL[k*k];
     sobel_filter(k, kernel);
 
@@ -142,6 +171,7 @@ int main( int argc, char** argv ) {
     conv(frameArray, array, size, kernel, k, out);
 
     save_result(name, out, size);
+
 
     return 0;
 }
