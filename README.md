@@ -1,5 +1,7 @@
 # GPU-Project
-Application of parallel programming with Cuda
+Application of parallel programming with Cuda. 
+
+This repository contains the project code of Augusta MUKAM and Olli ELORANTA for the GPU computing course. The main programs are used to run an edge detection filter on the CPU or GPU and the aim of the project is to compare the results between their speeds. The CPU filtering can also be done to an input image with OpenCV. 
 
 **1. Repository contents**
 
@@ -63,7 +65,18 @@ OPTIONS:
                                         1 : conv_naive ; 2: conv_tiled_shared
 The defaut parameters are : WC = 256, HC = 256, WK = 3 and choice = 1
 
-**4. To get the time**
+**4. How to extract the execution times**
 
 perl extract.pl < data.txt > data.csv
 
+**5. Running the CPU implementation with an image**
+
+g++ opencv.cpp -o ocv -std=c++11 `pkg-config --cflags --libs opencv`
+
+OPTIONS
+
+      -h, --help                        Display this help menu
+      --i=[imageIn]                     Filename of the input image
+      --k=[widthK]                      Width of kernel matrix K
+
+Running `./ocv` with default parameters does the edge detection filtering on the `smiley.jpg` file with a filter of width 3.  
