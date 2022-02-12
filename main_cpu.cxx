@@ -25,7 +25,7 @@
 /* Toplevel function.                                                         */
 /*----------------------------------------------------------------------------*/
 int main(int argc, char *argv[]) {
-  std::cout << "[Matrix Convolutional Product Using CPU]" << std::endl;
+  //std::cout << "[Matrix Convolutional Product Using CPU]" << std::endl;
 
   // Define parser 
   args::ArgumentParser parser("edge_cpu", "Matrix Convolutional Product Using CPU");
@@ -76,11 +76,11 @@ int main(int argc, char *argv[]) {
   // --- Begin calculations ---
  
   // Run CPU convolution
-  std::cout << " CPU convolution of matrice output"
-            << " of size " << WC << "x" << HC << " with a Sobel Filter of size " << WK << "x" << WK
-            << std::endl;
+  //std::cout << " CPU convolution of matrice output"
+            //<< " of size " << WC << "x" << HC << " with a Sobel Filter of size " << WK << "x" << WK
+            //<< std::endl;
 
-  std::cout << " == Computation starts..." << std::endl;
+  //std::cout << " == Computation starts..." << std::endl;
 
   // Print kernel and input
   print_array(h_K, WK, WK);
@@ -99,10 +99,10 @@ int main(int argc, char *argv[]) {
   /* Performance computation, results and performance printing ------------ */
   auto flop = 2 * WC * HC * WK * WK ;
 
-  std::cout << " == Performances " << std::endl;
-  std::cout << "\t Processing time: " << duration.count() << " (µs)"
+ // std::cout << " == Performances " << std::endl;
+  std::cout << "Processing time: " << duration.count() << " (µs)"
             << std::endl;
-  std::cout << "\t GFLOPS: " << flop / duration.count() / 1e+3 << std::endl;
+  std::cout << "GFLOPS: " << flop / duration.count() / 1e+3 << std::endl;
 
   /*if (check_out)
     check_result<REAL>(A, B, C, M, N, K); // Res checking

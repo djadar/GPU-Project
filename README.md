@@ -5,6 +5,9 @@ This repository contains the project code of Augusta MUKAM and Olli ELORANTA for
 
 **1. Repository contents**
 
+Main branch : main
+Provisory test branch : test
+
 #### Main code
 * `main_cpu.cxx` - Contains the CPU main code and convolution function
 * `main_gpu.cu`  - Contains the GPU main code. 

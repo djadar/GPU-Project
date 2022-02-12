@@ -30,7 +30,7 @@
 ///
 int main(int argc, char **argv) {
 
-  std::cout << "[Matrix Convolutional Product Using CUDA] - Starting..." << std::endl;
+ // std::cout << "[Matrix Convolutional Product Using CUDA] - Starting..." << std::endl;
 
   // Define parser 
   args::ArgumentParser parser("edge_cuda", "Matrix Convolutional Product Using CUDA");
@@ -175,10 +175,10 @@ int main(int argc, char **argv) {
   cudaEventElapsedTime(&msecTotal, start, stop);
   auto flop = 2 * (float)WC * (float)HC * (float)WK * (float)WK;
   int microsecond = msecTotal * 1000;
-  std::cout << " == Performances " << std::endl;
-  std::cout << "\t Processing time: " << microsecond << " (µs)"
+  //std::cout << " Performances " << std::endl;
+  std::cout << "Processing time: " << microsecond << " (µs)"
             << std::endl;
-  std::cout << "\t GFLOPS: " << flop / microsecond / 1e+3 << std::endl;
+  std::cout << "GFLOPS: " << flop / microsecond / 1e+3 << std::endl;
 
 	cudaFree( d_A );
 	cudaFree( d_K );
