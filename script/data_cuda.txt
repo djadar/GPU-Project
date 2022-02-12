@@ -1,0 +1,270 @@
+[Matrix Convolutional Product Using CUDA] - Starting...
+	 GPU Device 0: "GRID RTX6000P-8C" with compute capability 7.5
+
+[0 1 ]
+[-0.5 0 0.5 ]
+[
+[0.97358 0.734557 0.709487 0.655976 0.719313 ]
+[
+ ================ NAIVE ===================
+[0.808881 -0.182214 -0.3203 -0.522022 -0.171268 ]
+[
+ == Performances 
+	 Processing time: 2255 (µs)
+	 GFLOPS: 0.130781
+[Matrix Convolutional Product Using CUDA] - Starting...
+	 GPU Device 0: "GRID RTX6000P-8C" with compute capability 7.5
+
+[0 1 ]
+[-0.5 0 0.5 ]
+[
+[0.831551 0.55753 0.920246 0.0823268 0.496421 ]
+[
+ ================ SHARED ===================
+[-0.303478 0.713289 0.0307631 -0.702717 0.535265 ]
+[
+ == Performances 
+	 Processing time: 210 (µs)
+	 GFLOPS: 1.40434
+[Matrix Convolutional Product Using CUDA] - Starting...
+	 GPU Device 0: "GRID RTX6000P-8C" with compute capability 7.5
+
+[-0.25 -0.2 0 0.2 0.25 ]
+[
+[0.592237 0.686408 0.12374 0.543006 0.536158 ]
+[
+ ================ NAIVE ===================
+[-0.31582 0.11193 0.446175 0.220142 -0.401161 ]
+[
+ == Performances 
+	 Processing time: 222 (µs)
+	 GFLOPS: 3.69009
+[Matrix Convolutional Product Using CUDA] - Starting...
+	 GPU Device 0: "GRID RTX6000P-8C" with compute capability 7.5
+
+[-0.25 -0.2 0 0.2 0.25 ]
+[
+[0.592237 0.686408 0.12374 0.543006 0.536158 ]
+[
+ ================ SHARED ===================
+[-0.555178 -0.673538 0.0589696 0.224371 0.303081 ]
+[
+ == Performances 
+	 Processing time: 184 (µs)
+	 GFLOPS: 4.45217
+[Matrix Convolutional Product Using CUDA] - Starting...
+	 GPU Device 0: "GRID RTX6000P-8C" with compute capability 7.5
+
+[0 1 ]
+[-0.5 0 0.5 ]
+[
+[0.874583 0.710352 0.348265 0.952651 0.12326 ]
+[
+ ================ NAIVE ===================
+[-0.0214445 0.367141 0.252484 -0.343739 0.213024 ]
+[
+ == Performances 
+	 Processing time: 553 (µs)
+	 GFLOPS: 2.13318
+[Matrix Convolutional Product Using CUDA] - Starting...
+	 GPU Device 0: "GRID RTX6000P-8C" with compute capability 7.5
+
+[0 1 ]
+[-0.5 0 0.5 ]
+[
+[0.406884 0.20634 0.367014 0.396707 0.524128 ]
+[
+ ================ SHARED ===================
+[-0.334007 -0.259443 -0.292589 0.42896 0.989687 ]
+[
+ == Performances 
+	 Processing time: 562 (µs)
+	 GFLOPS: 2.09902
+[Matrix Convolutional Product Using CUDA] - Starting...
+	 GPU Device 0: "GRID RTX6000P-8C" with compute capability 7.5
+
+[-0.25 -0.2 0 0.2 0.25 ]
+[
+[0.185234 0.345855 0.00148704 0.352059 0.717229 ]
+[
+ ================ NAIVE ===================
+[0.453326 -0.169361 -0.959726 -0.979018 -0.297416 ]
+[
+ == Performances 
+	 Processing time: 469 (µs)
+	 GFLOPS: 6.98678
+[Matrix Convolutional Product Using CUDA] - Starting...
+	 GPU Device 0: "GRID RTX6000P-8C" with compute capability 7.5
+
+[-0.25 -0.2 0 0.2 0.25 ]
+[
+[0.163324 0.923492 0.972084 0.233156 0.410851 ]
+[
+ ================ SHARED ===================
+[-0.731689 -0.0630136 -0.212635 0.102846 -0.0385998 ]
+[
+ == Performances 
+	 Processing time: 518 (µs)
+	 GFLOPS: 6.32587
+[Matrix Convolutional Product Using CUDA] - Starting...
+	 GPU Device 0: "GRID RTX6000P-8C" with compute capability 7.5
+
+[0 1 ]
+[-0.5 0 0.5 ]
+[
+[0.575007 0.795021 0.594439 0.575662 0.161736 ]
+[
+ ================ NAIVE ===================
+[0.0428383 -0.627209 0.25087 0.343005 0.052765 ]
+[
+ == Performances 
+	 Processing time: 2531 (µs)
+	 GFLOPS: 1.86432
+[Matrix Convolutional Product Using CUDA] - Starting...
+	 GPU Device 0: "GRID RTX6000P-8C" with compute capability 7.5
+
+[0 1 ]
+[-0.5 0 0.5 ]
+[
+[0.575007 0.795021 0.594439 0.575662 0.161736 ]
+[
+ ================ SHARED ===================
+[0.0428383 -0.627209 0.25087 0.343005 0.052765 ]
+[
+ == Performances 
+	 Processing time: 1442 (µs)
+	 GFLOPS: 3.27226
+[Matrix Convolutional Product Using CUDA] - Starting...
+	 GPU Device 0: "GRID RTX6000P-8C" with compute capability 7.5
+
+[-0.25 -0.2 0 0.2 0.25 ]
+[
+[0.0655246 0.759006 0.262972 0.521271 0.0200115 ]
+[
+ ================ NAIVE ===================
+[-0.576359 0.512071 1.24282 0.790187 -0.533079 ]
+[
+ == Performances 
+	 Processing time: 1357 (µs)
+	 GFLOPS: 9.65895
+[Matrix Convolutional Product Using CUDA] - Starting...
+	 GPU Device 0: "GRID RTX6000P-8C" with compute capability 7.5
+
+[-0.25 -0.2 0 0.2 0.25 ]
+[
+[0.584581 0.746989 0.816841 0.458098 0.764466 ]
+[
+ ================ SHARED ===================
+[-0.570368 -0.186951 0.0570731 -0.0317799 -0.423475 ]
+[
+ == Performances 
+	 Processing time: 1395 (µs)
+	 GFLOPS: 9.39584
+[Matrix Convolutional Product Using CUDA] - Starting...
+	 GPU Device 0: "GRID RTX6000P-8C" with compute capability 7.5
+
+[0 1 ]
+[-0.5 0 0.5 ]
+[
+[0.628531 0.952889 0.26673 0.976356 0.367919 ]
+[
+ ================ NAIVE ===================
+[0.0681279 -0.338326 -0.279251 -0.0935714 0.393488 ]
+[
+ == Performances 
+	 Processing time: 4676 (µs)
+	 GFLOPS: 4.03643
+[Matrix Convolutional Product Using CUDA] - Starting...
+	 GPU Device 0: "GRID RTX6000P-8C" with compute capability 7.5
+
+[0 1 ]
+[-0.5 0 0.5 ]
+[
+[0.628531 0.952889 0.26673 0.976356 0.367919 ]
+[
+ ================ SHARED ===================
+[0.0681279 -0.338326 -0.279251 -0.0935714 0.393488 ]
+[
+ == Performances 
+	 Processing time: 4660 (µs)
+	 GFLOPS: 4.05029
+[Matrix Convolutional Product Using CUDA] - Starting...
+	 GPU Device 0: "GRID RTX6000P-8C" with compute capability 7.5
+
+[-0.25 -0.2 0 0.2 0.25 ]
+[
+[0.246995 0.42987 0.0688469 0.793317 0.561339 ]
+[
+ ================ NAIVE ===================
+[-0.562917 -0.855103 -0.546159 -0.459454 0.496126 ]
+[
+ == Performances 
+	 Processing time: 5529 (µs)
+	 GFLOPS: 9.48251
+[Matrix Convolutional Product Using CUDA] - Starting...
+	 GPU Device 0: "GRID RTX6000P-8C" with compute capability 7.5
+
+[-0.25 -0.2 0 0.2 0.25 ]
+[
+[0.551486 0.0909695 0.363488 0.341218 0.725383 ]
+[
+ ================ SHARED ===================
+[-0.0703889 0.357763 -0.593268 -0.417014 0.0413699 ]
+[
+ == Performances 
+	 Processing time: 6350 (µs)
+	 GFLOPS: 8.2565
+[Matrix Convolutional Product Using CUDA] - Starting...
+	 GPU Device 0: "GRID RTX6000P-8C" with compute capability 7.5
+
+[0 1 ]
+[-0.5 0 0.5 ]
+[
+[0.606505 0.359296 0.85988 0.518002 0.972912 ]
+[
+ ================ NAIVE ===================
+[-0.159449 -0.845365 0.0584912 0.914986 0.454852 ]
+[
+ == Performances 
+	 Processing time: 22850 (µs)
+	 GFLOPS: 3.30405
+[Matrix Convolutional Product Using CUDA] - Starting...
+	 GPU Device 0: "GRID RTX6000P-8C" with compute capability 7.5
+
+[0 1 ]
+[-0.5 0 0.5 ]
+[
+[0.298857 0.868451 0.302816 0.769069 0.0299953 ]
+[
+ ================ SHARED ===================
+[0.206888 -0.33226 -0.156787 -0.254937 0.0754259 ]
+[
+ == Performances 
+	 Processing time: 27433 (µs)
+	 GFLOPS: 2.75207
+[Matrix Convolutional Product Using CUDA] - Starting...
+	 GPU Device 0: "GRID RTX6000P-8C" with compute capability 7.5
+
+[-0.25 -0.2 0 0.2 0.25 ]
+[
+[0.15954 0.755607 0.520124 0.673282 0.811692 ]
+[
+ ================ NAIVE ===================
+[-0.0463147 0.872941 0.632168 -0.226649 0.286008 ]
+[
+ == Performances 
+	 Processing time: 19392 (µs)
+	 GFLOPS: 10.8145
+[Matrix Convolutional Product Using CUDA] - Starting...
+	 GPU Device 0: "GRID RTX6000P-8C" with compute capability 7.5
+
+[-0.25 -0.2 0 0.2 0.25 ]
+[
+[0.622695 0.215712 0.690673 0.0343345 0.858486 ]
+[
+ ================ SHARED ===================
+[-0.329465 -0.0113593 -0.34321 -0.491832 0.0983247 ]
+[
+ == Performances 
+	 Processing time: 24885 (µs)
+	 GFLOPS: 8.42737
