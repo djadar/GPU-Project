@@ -1,380 +1,160 @@
 Size: 128
 kernel: 3
 choice: 1
-Time: 278 (µs)
-GFLOPS: 1.06083
+Processing time: 343 (µs)
+GFLOPS: 0.859802
 Size: 128
 kernel: 3
 choice: 2
-Time: 186 (µs)
-GFLOPS: 1.58555
+Processing time: 253 (µs)
+GFLOPS: 1.16566
 Size: 128
 kernel: 5
 choice: 1
-Time: 157 (µs)
-GFLOPS: 5.21783
+Processing time: 150 (µs)
+GFLOPS: 5.46133
 Size: 128
 kernel: 5
 choice: 2
-Time: 257 (µs)
-GFLOPS: 3.18755
+Processing time: 163 (µs)
+GFLOPS: 5.02577
 Size: 256
 kernel: 3
 choice: 1
-Time: 685 (µs)
-GFLOPS: 1.72211
+Processing time: 584 (µs)
+GFLOPS: 2.01995
 Size: 256
 kernel: 3
 choice: 2
-Time: 806 (µs)
-GFLOPS: 1.46358
+Processing time: 375 (µs)
+GFLOPS: 3.14573
 Size: 256
 kernel: 5
 choice: 1
-Time: 391 (µs)
-GFLOPS: 8.38056
+Processing time: 347 (µs)
+GFLOPS: 9.44323
 Size: 256
 kernel: 5
 choice: 2
-Time: 444 (µs)
-GFLOPS: 7.38018
+Processing time: 406 (µs)
+GFLOPS: 8.07094
 Size: 512
 kernel: 3
 choice: 1
-Time: 1343 (µs)
-GFLOPS: 3.51347
+Processing time: 1334 (µs)
+GFLOPS: 3.53718
 Size: 512
 kernel: 3
 choice: 2
-Time: 1322 (µs)
-GFLOPS: 3.56928
+Processing time: 1312 (µs)
+GFLOPS: 3.59649
 Size: 512
 kernel: 5
 choice: 1
-Time: 1760 (µs)
-GFLOPS: 7.44727
+Processing time: 1284 (µs)
+GFLOPS: 10.2081
 Size: 512
 kernel: 5
 choice: 2
-Time: 1523 (µs)
-GFLOPS: 8.60617
+Processing time: 1314 (µs)
+GFLOPS: 9.97504
 Size: 1024
 kernel: 3
 choice: 1
-Time: 5893 (µs)
-GFLOPS: 3.20285
+Processing time: 4711 (µs)
+GFLOPS: 4.00645
 Size: 1024
 kernel: 3
 choice: 2
-Time: 5647 (µs)
-GFLOPS: 3.34237
+Processing time: 4721 (µs)
+GFLOPS: 3.99796
 Size: 1024
 kernel: 5
 choice: 1
-Time: 4964 (µs)
-GFLOPS: 10.5618
+Processing time: 4769 (µs)
+GFLOPS: 10.9937
 Size: 1024
 kernel: 5
 choice: 2
-Time: 6240 (µs)
-GFLOPS: 8.40205
+Processing time: 5815 (µs)
+GFLOPS: 9.01613
 Size: 2048
 kernel: 3
 choice: 1
-Time: 25212 (µs)
-GFLOPS: 2.99451
+Processing time: 18895 (µs)
+GFLOPS: 3.99563
 Size: 2048
 kernel: 3
 choice: 2
-Time: 18247 (µs)
-GFLOPS: 4.13753
+Processing time: 25952 (µs)
+GFLOPS: 2.90912
 Size: 2048
 kernel: 5
 choice: 1
-Time: 19442 (µs)
-GFLOPS: 10.7867
+Processing time: 19193 (µs)
+GFLOPS: 10.9267
 Size: 2048
 kernel: 5
 choice: 2
-Time: 22426 (µs)
-GFLOPS: 9.35143
-Size: 128
-kernel: 3
-choice: 1
-Processing time: 1708 (µs)
-GFLOPS: 0.172665
-Size: 128
-kernel: 3
-choice: 2
-Size: 128
-kernel: 5
-choice: 1
-Processing time: 310 (µs)
-GFLOPS: 2.64258
-Size: 128
-kernel: 5
-choice: 2
-Size: 256
-kernel: 3
-choice: 1
-Processing time: 997 (µs)
-GFLOPS: 1.1832
-Size: 256
-kernel: 3
-choice: 2
-Size: 256
-kernel: 5
-choice: 1
-Processing time: 426 (µs)
-GFLOPS: 7.69202
-Size: 256
-kernel: 5
-choice: 2
-Size: 512
-kernel: 3
-choice: 1
-Processing time: 1597 (µs)
-GFLOPS: 2.95466
-Size: 512
-kernel: 3
-choice: 2
-Size: 512
-kernel: 5
-choice: 1
-Processing time: 1550 (µs)
-GFLOPS: 8.45626
-Size: 512
-kernel: 5
-choice: 2
-Size: 1024
-kernel: 3
-choice: 1
-Processing time: 4879 (µs)
-GFLOPS: 3.86849
-Size: 1024
-kernel: 3
-choice: 2
-Size: 128
-kernel: 3
-choice: 1
-Processing time: 215 (µs)
-GFLOPS: 1.37168
-Size: 128
-kernel: 3
-choice: 2
-Size: 128
-kernel: 5
-choice: 1
-Processing time: 155 (µs)
-GFLOPS: 5.28516
-Size: 128
-kernel: 5
-choice: 2
-Size: 256
-kernel: 3
-choice: 1
-Processing time: 597 (µs)
-GFLOPS: 1.97596
-Size: 256
-kernel: 3
-choice: 2
-Size: 256
-kernel: 5
-choice: 1
-Processing time: 396 (µs)
-GFLOPS: 8.27475
-Size: 256
-kernel: 5
-choice: 2
-Size: 512
-kernel: 3
-choice: 1
-Processing time: 1364 (µs)
-GFLOPS: 3.45938
-Size: 512
-kernel: 3
-choice: 2
-Size: 512
-kernel: 5
-choice: 1
-Processing time: 1852 (µs)
-GFLOPS: 7.07732
-Size: 512
-kernel: 5
-choice: 2
-Size: 1024
-kernel: 3
-choice: 1
-Processing time: 5131 (µs)
-GFLOPS: 3.6785
-Size: 1024
-kernel: 3
-choice: 2
-Size: 1024
-kernel: 5
-choice: 1
-Processing time: 10198 (µs)
-GFLOPS: 5.14109
-Size: 1024
-kernel: 5
-choice: 2
-Size: 128
-kernel: 3
-choice: 1
-Processing time: 189 (µs)
-GFLOPS: 1.56038
-Size: 128
-kernel: 3
-choice: 2
-Processing time: 154 (µs)
-GFLOPS: 1.91501
-Size: 128
-kernel: 5
-choice: 1
-Processing time: 241 (µs)
-GFLOPS: 3.39917
-Size: 128
-kernel: 5
-choice: 2
-Processing time: 325 (µs)
-GFLOPS: 2.52062
-Size: 256
-kernel: 3
-choice: 1
-Processing time: 482 (µs)
-GFLOPS: 2.4474
-Size: 256
-kernel: 3
-choice: 2
-Processing time: 417 (µs)
-GFLOPS: 2.82889
-Size: 256
-kernel: 5
-choice: 1
-Processing time: 389 (µs)
-GFLOPS: 8.42365
-Size: 256
-kernel: 5
-choice: 2
-Processing time: 362 (µs)
-GFLOPS: 9.05193
-Size: 512
-kernel: 3
-choice: 1
-Processing time: 1348 (µs)
-GFLOPS: 3.50044
-Size: 512
-kernel: 3
-choice: 2
-Processing time: 1606 (µs)
-GFLOPS: 2.9381
-Size: 512
-kernel: 5
-choice: 1
-Processing time: 1429 (µs)
-GFLOPS: 9.17229
-Size: 512
-kernel: 5
-choice: 2
-Processing time: 1494 (µs)
-GFLOPS: 8.77323
-Size: 1024
-kernel: 3
-choice: 1
-Processing time: 8472 (µs)
-GFLOPS: 2.22785
-Size: 1024
-kernel: 3
-choice: 2
-Processing time: 5894 (µs)
-GFLOPS: 3.2023
-Size: 1024
-kernel: 5
-choice: 1
-Processing time: 4777 (µs)
-GFLOPS: 10.9753
-Size: 1024
-kernel: 5
-choice: 2
-Processing time: 4948 (µs)
-GFLOPS: 10.596
-Size: 2048
-kernel: 3
-choice: 1
-Processing time: 18804 (µs)
-GFLOPS: 4.01497
-Size: 2048
-kernel: 3
-choice: 2
-Processing time: 23149 (µs)
-GFLOPS: 3.26137
-Size: 2048
-kernel: 5
-choice: 1
-Processing time: 17087 (µs)
-GFLOPS: 12.2734
-Size: 2048
-kernel: 5
-choice: 2
-Processing time: 18441 (µs)
-GFLOPS: 11.3722
+Processing time: 23609 (µs)
+GFLOPS: 8.88285
 Size: 4096
 kernel: 3
 choice: 1
-Processing time: 85648 (µs)
-GFLOPS: 3.52594
+Processing time: 83947 (µs)
+GFLOPS: 3.59739
 Size: 4096
 kernel: 3
 choice: 2
-Processing time: 73297 (µs)
-GFLOPS: 4.12009
+Processing time: 78090 (µs)
+GFLOPS: 3.8672
 Size: 4096
 kernel: 5
 choice: 1
-Processing time: 72057 (µs)
-GFLOPS: 11.6416
+Processing time: 89763 (µs)
+GFLOPS: 9.34529
 Size: 4096
 kernel: 5
 choice: 2
-Processing time: 108514 (µs)
-GFLOPS: 7.73044
+Processing time: 95077 (µs)
+GFLOPS: 8.82296
 Size: 8192
 kernel: 3
 choice: 1
-Processing time: 313153 (µs)
-GFLOPS: 3.85741
+Processing time: 292364 (µs)
+GFLOPS: 4.1317
 Size: 8192
 kernel: 3
 choice: 2
-Processing time: 322273 (µs)
-GFLOPS: 3.74825
+Processing time: 399538 (µs)
+GFLOPS: 3.02339
 Size: 8192
 kernel: 5
 choice: 1
-Processing time: 298049 (µs)
-GFLOPS: 11.258
+Processing time: 335435 (µs)
+GFLOPS: 10.0033
 Size: 8192
 kernel: 5
 choice: 2
-Processing time: 374599 (µs)
-GFLOPS: 8.95743
+Processing time: 294094 (µs)
+GFLOPS: 11.4094
 Size: 16384
 kernel: 3
 choice: 1
-Processing time: 1311770 (µs)
-GFLOPS: 3.68345
+Processing time: 1423669 (µs)
+GFLOPS: 3.39393
 Size: 16384
 kernel: 3
 choice: 2
-Processing time: 1154974 (µs)
-GFLOPS: 4.1835
+Processing time: 1226658 (µs)
+GFLOPS: 3.93903
 Size: 16384
 kernel: 5
 choice: 1
-Processing time: 1259468 (µs)
-GFLOPS: 10.6567
+Processing time: 1529245 (µs)
+GFLOPS: 8.77673
 Size: 16384
 kernel: 5
 choice: 2
-Processing time: 1266600 (µs)
-GFLOPS: 10.5967
+Processing time: 1190357 (µs)
+GFLOPS: 11.2754

@@ -1,104 +1,64 @@
 Size: 128
 kernel: 3
-tlc: 2235 (µs)
-GFLOPS: 0.131
+Processing time: 2265 (µs)
+GFLOPS: 0.130204
 Size: 128
 kernel: 5
-tlc: 2462 (µs)
-GFLOPS: 0.332
+Processing time: 3228 (µs)
+GFLOPS: 0.253779
 Size: 256
 kernel: 3
-tlc: 4302 (µs)
-GFLOPS: 0.274
+Processing time: 4811 (µs)
+GFLOPS: 0.245198
 Size: 256
 kernel: 5
-tlc: 9081 (µs)
-GFLOPS: 0.36
+Processing time: 10065 (µs)
+GFLOPS: 0.325564
 Size: 512
 kernel: 3
-tlc: 13379 (µs)
-GFLOPS: 0.352
+Processing time: 13545 (µs)
+GFLOPS: 0.348364
 Size: 512
 kernel: 5
-tlc: 33664 (µs)
-GFLOPS: 0.389
+Processing time: 33773 (µs)
+GFLOPS: 0.388097
 Size: 1024
 kernel: 3
-tlc: 54133 (µs)
-GFLOPS: 0.348
+Processing time: 54081 (µs)
+GFLOPS: 0.349002
 Size: 1024
 kernel: 5
-tlc: 135062 (µs)
-GFLOPS: 0.388
+Processing time: 135432 (µs)
+GFLOPS: 0.387123
 Size: 2048
 kernel: 3
-tlc: 217999 (µs)
-GFLOPS: 0.346
+Processing time: 230672 (µs)
+GFLOPS: 0.327294
 Size: 2048
 kernel: 5
-tlc: 542253 (µs)
-GFLOPS: 0.386
-Size: 128
-kernel: 3
-Processing time: 1624 (µs)
-GFLOPS: 0.181596
-Size: 128
-kernel: 5
-Processing time: 4443 (µs)
-GFLOPS: 0.18438
-Size: 256
-kernel: 3
-Processing time: 5066 (µs)
-GFLOPS: 0.232856
-Size: 256
-kernel: 5
-Processing time: 9926 (µs)
-GFLOPS: 0.330123
-Size: 512
-kernel: 3
-Processing time: 13718 (µs)
-GFLOPS: 0.343971
-Size: 512
-kernel: 5
-Processing time: 33765 (µs)
-GFLOPS: 0.388189
-Size: 1024
-kernel: 3
-Processing time: 62783 (µs)
-GFLOPS: 0.300629
-Size: 1024
-kernel: 5
-Processing time: 135623 (µs)
-GFLOPS: 0.386577
-Size: 2048
-kernel: 3
-Processing time: 218028 (µs)
-GFLOPS: 0.346274
-Size: 2048
-kernel: 5
-Processing time: 543352 (µs)
-GFLOPS: 0.385966
+Processing time: 561421 (µs)
+GFLOPS: 0.373544
 Size: 4096
 kernel: 3
-Processing time: 873306 (µs)
-GFLOPS: 0.345801
+Processing time: 877870 (µs)
+GFLOPS: 0.344003
 Size: 4096
 kernel: 5
-Processing time: 2193707 (µs)
-GFLOPS: 0.382394
+Processing time: 2224519 (µs)
+GFLOPS: 0.377098
 Size: 8192
 kernel: 3
-Processing time: 3478726 (µs)
-GFLOPS: 0.347242
+Processing time: 3515155 (µs)
+GFLOPS: 0.343643
 Size: 8192
 kernel: 5
-Processing time: 8710522 (µs)
-GFLOPS: 0.385217
+Processing time: 8798753 (µs)
+GFLOPS: 0.381354
 Size: 16384
 kernel: 3
-Processing time: 13891808 (µs)
-GFLOPS: 0.347819
+Processing time: 13955287 (µs)
+GFLOPS: 0.346237
 Size: 16384
 kernel: 5
-Processing time: 37937228 (µs)
-GFLOPS: 0.353789
+Processing time: 37971775 (µs)
+GFLOPS: 0.353467
