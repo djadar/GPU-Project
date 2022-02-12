@@ -1,38 +1,63 @@
----
-title: "Analysis"
-author: "Us"
-date: "12/02/2022"
-output: pdf_document
----
 
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
-```
-
+Data Analysis
 
 ```{r}
 library(stringr)
 text1 = readLines("data_cpu.txt")
 text2 = readLines("data_gpu.txt")
-text1[0:3]
-text2
+#length(text1)
 ```
 
-```{r}
-ids <- str_extract(text1, 'Size: [ ]*\\S+')
-ids[1]
-ok <- str_extract(text1, 'kernel: [ ]*\\S+')
-ok
-library(dplyr)
 
-df =read.csv(file = "data.csv")
-df <- df[df$Kernel == 3,]
+```{r}
+data.frame(df, stringsAsFactors = TRUE)
+
+size <- c(sub(".*: ", "", text1[1]))
+kernel <- c(sub(".*: ", "", text1[2]))
+time <- c(sub(".*: ", "", text1[3]))
+gflops <- c(sub(".*: ", "", text1[4]))
+choice <- c("cpu")
+for (i in seq(5, length(text1), by=4)) {
+  size[i/4 + 1] = sub(".*: ", "", text1[i])
+  kernel[i/4 + 1] = sub(".*: ", "", text1[i+1])
+  choice[i/4 + 1] = "cpu"
+  time[i/4 + 1] = sub(".*: ", "", text1[i+2])
+  gflops[i/4 + 1] = sub(".*: ", "", text1[i+3])
+}
+
+m= length(size)
+
+for (i in seq(1, length(text2), by=5)) {
+  size[i/5 + 1+m] = sub(".*: ", "", text2[i])
+  kernel[i/5 + 1+m] = sub(".*: ", "", text2[i+1])
+  if(sub(".*: ", "", text2[i+2])==1){
+    choice[i/5 + 1+m] = "naive"
+  }else{
+    choice[i/5 + 1+m] ="tiled"
+  }
+  
+  time[i/5 + 1+m] = sub(".*: ", "", text2[i+3])
+  gflops[i/5 + 1+m] = sub(".*: ", "", text2[i+4])
+}
+df <- data.frame(size,kernel,choice, time,gflops)
+
+df
+```
+```{r}
+df
+df$size <- as.numeric(as.character(df$size))
+df$kernel <- as.numeric(as.character(df$kernel))
+df$time <- as.numeric(as.character(df$time))
+df$gflops <- as.numeric(as.character(df$gflops))
+
+df <- df[df$kernel == 3,]
 df
 ```
 
+
 ```{r}
 library(ggplot2)
-sp<-ggplot(df, aes(x=Size, y=Time, color=Choice)) + geom_point() + theme_bw() + geom_path(aes(group = Choice)) 
+sp<-ggplot(df, aes(x=size, y=time, color=choice)) + geom_point() + theme_bw() + geom_path(aes(group = choice)) 
 sp + scale_y_log10()
 sp
 ```
