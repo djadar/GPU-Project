@@ -1,4 +1,4 @@
-#define TW 32
+#define TW 64
 #define WIDTH_K 3
 
 #define REAL float

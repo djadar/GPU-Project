@@ -131,7 +131,7 @@ int main(int argc, char **argv) {
 
   // setup execution parameters
   dim3 threads, grid;
-  threads = dim3(2*TW, 2*TW);
+  threads = dim3(TW, TW);
   
   // Print kernel and input
   //print_array(h_K, WK, WK);
