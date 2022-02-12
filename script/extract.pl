@@ -16,8 +16,8 @@ while($line=<>) {
     if($line =~/^kernel: ([\d\.]*)$/) {
         $Kernel = $1; next;
     } 
-    if($line =~/^tlc: ([\d\.]*)$/) {
-        $tlc=$1; next;
+    if($line =~/^Processing time: ([\d\.]*)$/) {
+        $Kernel = $1; next;
     } 
     if($line =~/^GFLOPS: ([\d\.]*)$/) {
         $Gflops=$1; 

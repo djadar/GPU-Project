@@ -1,0 +1,95 @@
+---
+title: "Analysis"
+author: "Us"
+date: "12/02/2022"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+```{r}
+library(stringr)
+text1 = readLines("data_cpu.txt")
+text2 = readLines("data_gpu.txt")
+text1[0:3]
+text2
+```
+
+```{r}
+ids <- str_extract(text1, 'Size: [ ]*\\S+')
+ids[1]
+ok <- str_extract(text1, 'kernel: [ ]*\\S+')
+ok
+library(dplyr)
+
+df =read.csv(file = "data.csv")
+df <- df[df$Kernel == 3,]
+df
+```
+
+```{r}
+library(ggplot2)
+sp<-ggplot(df, aes(x=Size, y=Time, color=Choice)) + geom_point() + theme_bw() + geom_path(aes(group = Choice)) 
+sp + scale_y_log10()
+sp
+```
+
+
+```{r}
+df0 <- df[df$choice == 0,]$time
+df1 <- df[df$choice == 1,]$time
+df2 <- df[df$choice == 2,]
+
+ggplot(df, aes(x=Size)) + 
+  geom_line(aes(y = df0), color = "darkred")
+```
+
+
+
+
+
+
+```{r}
+tu <- expand.grid(choice   = gl(3, 1, labels = c('0', '1', '2')))
+
+
+ggplot(tu, aes(x = Size, y = time, color = choice, group = choice)) + 
+  geom_point() + geom_line() 
+
+```
+
+
+```{r}
+sp <- ggscatter(df, x = "Size", y = "time",
+                add = "reg.line",               # Add regression line
+                conf.int = TRUE,                # Add confidence interval
+                color = "choice", palette = "jco", # Color by groups "cyl"
+                shape = "choice"                   # Change point shape by groups "cyl"
+                )+
+  stat_cor(aes(color = choice), label.x = 3)       # Add correlation coefficient
+sp
+```
+
+We want to show the evolution of time depending on the size and the kernel.
+
+```{r}
+plot(df$Size,df$Time)
+#col=c("red","blue","green")[df$Kernel])
+```
+
+
+```{r}
+library(ggplot2)
+p <- ggplot(df, aes(x = Size, y = Time)) + 
+  geom_point() 
+p + scale_y_log10()
+p + scale_y_continuous(trans = "log10")
+p + geom_line()
+```
+
+```{r}
+df %>% filter(df$Kernel = 3)
+df
