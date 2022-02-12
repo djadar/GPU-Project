@@ -95,7 +95,7 @@ int main(int argc, char **argv) {
   if (error != cudaSuccess) {
     printf("cudaGetDeviceProperties returned error code %d, line(%d)\n", error, __LINE__);
   } else {
-    printf("\t GPU Device %d: \"%s\" with compute capability %d.%d\n\n", devID, deviceProp.name, deviceProp.major, deviceProp.minor);
+    //printf("\t GPU Device %d: \"%s\" with compute capability %d.%d\n\n", devID, deviceProp.name, deviceProp.major, deviceProp.minor);
   }
 
   // utilities
@@ -151,13 +151,13 @@ int main(int argc, char **argv) {
       int blocksY = HC / (TW) + 1;
       grid = dim3(blocksX, blocksY);
       conv_naive<<<grid, threads >>>(d_C, d_A, d_K, WK, WC, HC);
-      std::cout << " ================ NAIVE ===================" << std::endl;
+      //std::cout << " ================ NAIVE ===================" << std::endl;
     }else if (n==2){
       int blocksX = WC / (TW - WK + 1) + 1;
       int blocksY = HC / (TW - WK + 1) + 1;
       grid = dim3(blocksX, blocksY);
       conv_shared<<<grid, threads >>>(d_C, d_A, d_K, WC, HC);
-      std::cout << " ================ SHARED ===================" << std::endl;
+      //std::cout << " ================ SHARED ===================" << std::endl;
     }
   cudaMemcpy(h_C, d_C, mem_size_C, cudaMemcpyDeviceToHost);
 

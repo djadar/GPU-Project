@@ -33,6 +33,8 @@ Remark : make sure to be on a gpu environnement to compile the `main_gpu.cu` fil
 
 **3.  How to test**
 
+Infrastructure :  GPU Device 0: "GRID RTX6000P-8C" with compute capability 7.5
+
 a) CPU version
 
 Run those commands :
