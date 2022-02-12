@@ -97,7 +97,7 @@ int main(int argc, char *argv[]) {
   //print_array(h_C, WC, HC);
 
   /* Performance computation, results and performance printing ------------ */
-  auto flop = 2 * WC * HC * WK * WK ;
+  auto flop = 2 * (float)WC * (float)HC * (float)WK * (float)WK ;
 
  // std::cout << " == Performances " << std::endl;
   std::cout << "Processing time: " << duration.count() << " (µs)"
