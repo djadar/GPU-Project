@@ -134,8 +134,8 @@ int main(int argc, char **argv) {
   threads = dim3(TW, TW);
   
   // Print kernel and input
-  print_array(h_K, WK, WK);
-  print_array(h_A, WA, HA);
+  //print_array(h_K, WK, WK);
+  //print_array(h_A, WA, HA);
 
   // create and start timer
   cudaEventCreate(&start);
@@ -169,7 +169,7 @@ int main(int argc, char **argv) {
   
 
   //Print output
-  print_array(h_C, WC, HC);  
+  //print_array(h_C, WC, HC);  
   
   // Performance computation, results and performance printing
   cudaEventElapsedTime(&msecTotal, start, stop);

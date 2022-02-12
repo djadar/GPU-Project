@@ -83,8 +83,8 @@ int main(int argc, char *argv[]) {
   //std::cout << " == Computation starts..." << std::endl;
 
   // Print kernel and input
-  print_array(h_K, WK, WK);
-  print_array(h_A, WA, HA);
+  //print_array(h_K, WK, WK);
+  //print_array(h_A, WA, HA);
   
   auto start = std::chrono::system_clock::now();
   
@@ -94,7 +94,7 @@ int main(int argc, char *argv[]) {
   auto duration = std::chrono::duration_cast<std::chrono::microseconds>(elapse);
 
   // Print output
-  print_array(h_C, WC, HC);
+  //print_array(h_C, WC, HC);
 
   /* Performance computation, results and performance printing ------------ */
   auto flop = 2 * WC * HC * WK * WK ;
