@@ -268,3 +268,143 @@ kernel: 5
 [
 Processing time: 26574 (µs)
 GFLOPS: 7.89174
+Size: 128
+kernel: 3
+	 GPU Device 0: "GRID RTX6000P-8C" with compute capability 7.5
+
+ ================ NAIVE ===================
+Processing time: 2295 (µs)
+GFLOPS: 0.128502
+Size: 128
+kernel: 3
+	 GPU Device 0: "GRID RTX6000P-8C" with compute capability 7.5
+
+ ================ SHARED ===================
+Processing time: 196 (µs)
+GFLOPS: 1.50465
+Size: 128
+kernel: 5
+	 GPU Device 0: "GRID RTX6000P-8C" with compute capability 7.5
+
+ ================ NAIVE ===================
+Processing time: 289 (µs)
+GFLOPS: 2.8346
+Size: 128
+kernel: 5
+	 GPU Device 0: "GRID RTX6000P-8C" with compute capability 7.5
+
+ ================ SHARED ===================
+Processing time: 218 (µs)
+GFLOPS: 3.7578
+Size: 256
+kernel: 3
+	 GPU Device 0: "GRID RTX6000P-8C" with compute capability 7.5
+
+ ================ NAIVE ===================
+Processing time: 602 (µs)
+GFLOPS: 1.95955
+Size: 256
+kernel: 3
+	 GPU Device 0: "GRID RTX6000P-8C" with compute capability 7.5
+
+ ================ SHARED ===================
+Processing time: 986 (µs)
+GFLOPS: 1.1964
+Size: 256
+kernel: 5
+	 GPU Device 0: "GRID RTX6000P-8C" with compute capability 7.5
+
+ ================ NAIVE ===================
+Processing time: 551 (µs)
+GFLOPS: 5.94701
+Size: 256
+kernel: 5
+	 GPU Device 0: "GRID RTX6000P-8C" with compute capability 7.5
+
+ ================ SHARED ===================
+Processing time: 798 (µs)
+GFLOPS: 4.10627
+Size: 512
+kernel: 3
+	 GPU Device 0: "GRID RTX6000P-8C" with compute capability 7.5
+
+ ================ NAIVE ===================
+Processing time: 1429 (µs)
+GFLOPS: 3.30202
+Size: 512
+kernel: 3
+	 GPU Device 0: "GRID RTX6000P-8C" with compute capability 7.5
+
+ ================ SHARED ===================
+Processing time: 1583 (µs)
+GFLOPS: 2.98079
+Size: 512
+kernel: 5
+	 GPU Device 0: "GRID RTX6000P-8C" with compute capability 7.5
+
+ ================ NAIVE ===================
+Processing time: 2046 (µs)
+GFLOPS: 6.40626
+Size: 512
+kernel: 5
+	 GPU Device 0: "GRID RTX6000P-8C" with compute capability 7.5
+
+ ================ SHARED ===================
+Processing time: 1710 (µs)
+GFLOPS: 7.66503
+Size: 1024
+kernel: 3
+	 GPU Device 0: "GRID RTX6000P-8C" with compute capability 7.5
+
+ ================ NAIVE ===================
+Processing time: 6783 (µs)
+GFLOPS: 2.7826
+Size: 1024
+kernel: 3
+	 GPU Device 0: "GRID RTX6000P-8C" with compute capability 7.5
+
+ ================ SHARED ===================
+Processing time: 5016 (µs)
+GFLOPS: 3.76283
+Size: 1024
+kernel: 5
+	 GPU Device 0: "GRID RTX6000P-8C" with compute capability 7.5
+
+ ================ NAIVE ===================
+Processing time: 4932 (µs)
+GFLOPS: 10.6303
+Size: 1024
+kernel: 5
+	 GPU Device 0: "GRID RTX6000P-8C" with compute capability 7.5
+
+ ================ SHARED ===================
+Processing time: 4842 (µs)
+GFLOPS: 10.8279
+Size: 2048
+kernel: 3
+	 GPU Device 0: "GRID RTX6000P-8C" with compute capability 7.5
+
+ ================ NAIVE ===================
+Processing time: 19891 (µs)
+GFLOPS: 3.79556
+Size: 2048
+kernel: 3
+	 GPU Device 0: "GRID RTX6000P-8C" with compute capability 7.5
+
+ ================ SHARED ===================
+Processing time: 18791 (µs)
+GFLOPS: 4.01775
+Size: 2048
+kernel: 5
+	 GPU Device 0: "GRID RTX6000P-8C" with compute capability 7.5
+
+ ================ NAIVE ===================
+Processing time: 27746 (µs)
+GFLOPS: 7.55839
+Size: 2048
+kernel: 5
+	 GPU Device 0: "GRID RTX6000P-8C" with compute capability 7.5
+
+ ================ SHARED ===================
+Processing time: 19483 (µs)
+GFLOPS: 10.764

@@ -103,3 +103,43 @@ kernel: 5
 [
 Processing time: 552315 (µs)
 GFLOPS: 0.379
+Size: 128
+kernel: 3
+Processing time: 1361 (µs)
+GFLOPS: 0.216
+Size: 128
+kernel: 5
+Processing time: 4371 (µs)
+GFLOPS: 0.187
+Size: 256
+kernel: 3
+Processing time: 3428 (µs)
+GFLOPS: 0.344
+Size: 256
+kernel: 5
+Processing time: 8398 (µs)
+GFLOPS: 0.39
+Size: 512
+kernel: 3
+Processing time: 13606 (µs)
+GFLOPS: 0.346
+Size: 512
+kernel: 5
+Processing time: 33646 (µs)
+GFLOPS: 0.389
+Size: 1024
+kernel: 3
+Processing time: 53532 (µs)
+GFLOPS: 0.352
+Size: 1024
+kernel: 5
+Processing time: 134981 (µs)
+GFLOPS: 0.388
+Size: 2048
+kernel: 3
+Processing time: 215920 (µs)
+GFLOPS: 0.349
+Size: 2048
+kernel: 5
+Processing time: 543416 (µs)
+GFLOPS: 0.385
