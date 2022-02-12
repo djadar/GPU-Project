@@ -1,40 +1,40 @@
 Size: 128
 kernel: 3
-Processing time: 2235 (µs)
+tlc: 2235 (µs)
 GFLOPS: 0.131
 Size: 128
 kernel: 5
-Processing time: 2462 (µs)
+tlc: 2462 (µs)
 GFLOPS: 0.332
 Size: 256
 kernel: 3
-Processing time: 4302 (µs)
+tlc: 4302 (µs)
 GFLOPS: 0.274
 Size: 256
 kernel: 5
-Processing time: 9081 (µs)
+tlc: 9081 (µs)
 GFLOPS: 0.36
 Size: 512
 kernel: 3
-Processing time: 13379 (µs)
+tlc: 13379 (µs)
 GFLOPS: 0.352
 Size: 512
 kernel: 5
-Processing time: 33664 (µs)
+tlc: 33664 (µs)
 GFLOPS: 0.389
 Size: 1024
 kernel: 3
-Processing time: 54133 (µs)
+tlc: 54133 (µs)
 GFLOPS: 0.348
 Size: 1024
 kernel: 5
-Processing time: 135062 (µs)
+tlc: 135062 (µs)
 GFLOPS: 0.388
 Size: 2048
 kernel: 3
-Processing time: 217999 (µs)
+tlc: 217999 (µs)
 GFLOPS: 0.346
 Size: 2048
 kernel: 5
-Processing time: 542253 (µs)
+tlc: 542253 (µs)
 GFLOPS: 0.386

@@ -7,7 +7,7 @@
 
 #OUTPUT_FILE=`data.txt`
 
-for i in 128 256 512 1024 2048; do
+for i in 128 256 512 1024 2048 4096; do
     for ker in 3 5 ; do
         echo "Size: $i" >> data_cpu.txt;
         echo "kernel: $ker" >> data_cpu.txt;
@@ -15,11 +15,12 @@ for i in 128 256 512 1024 2048; do
     done ;
 done
 
-for i in 128 256 512 1024 2048; do
+for i in 128 256 512 1024 2048 4096; do
     for ker in 3 5; do
         for cho in 1 2; do
             echo "Size: $i" >> data_gpu.txt;
             echo "kernel: $ker" >> data_gpu.txt;
+            echo "choice: $cho" >> data_gpu.txt;
             ../build/edge_cuda --WC=$i --HC=$i --WK=$ker --choice=$cho>> data_gpu.txt;
         done;
     done ;

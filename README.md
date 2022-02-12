@@ -33,8 +33,6 @@ Remark : make sure to be on a gpu environnement to compile the `main_gpu.cu` fil
 
 **3.  How to test**
 
-Infrastructure :  GPU Device 0: "GRID RTX6000P-8C" with compute capability 7.5
-
 a) CPU version
 
 Run those commands :
@@ -70,11 +68,7 @@ OPTIONS:
                                         1 : conv_naive ; 2: conv_tiled_shared
 The defaut parameters are : WC = 256, HC = 256, WK = 3 and choice = 1
 
-**4. How to extract the execution times**
-
-perl extract.pl < data.txt > data.csv
-
-**5. Running the CPU implementation with an image**
+**4. Running the CPU implementation with an image**
 
 g++ opencv.cpp -o ocv -std=c++11 `pkg-config --cflags --libs opencv`
 
@@ -84,4 +78,8 @@ OPTIONS
       --i=[imageIn]                     Filename of the input image
       --k=[widthK]                      Width of kernel matrix K
 
-Running `./ocv` with default parameters does the edge detection filtering on the `smiley.jpg` file with a filter of width 3.  
+Running `./ocv` with default parameters does the edge detection filtering on the `smiley.jpg` file with a filter of width 3.
+
+**5. How to extract the execution times**
+run `./run_benchmarking.sh` to get data_cpu.txt containing the print of the make
+`perl extract.pl < data_cpu.txt > data_cpu.csv` to generate our dataset.

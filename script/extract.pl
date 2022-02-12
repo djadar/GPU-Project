@@ -4,11 +4,11 @@ use strict;
 my($line);
 my($size);
 my($Kernel);
-my($Time);
+my($tlc);
 my($Gflops);
 
-print "Size, Kernel, Time, Gflops\n" ;
-OUTTER: while($line=<>) {
+print "Size, Kernel, tlc, Gflops\n" ;
+while($line=<>) {
     chomp $line;
     if($line =~/^Size: ([\d\.]*)$/) {
         $size = $1; next;
@@ -16,12 +16,12 @@ OUTTER: while($line=<>) {
     if($line =~/^kernel: ([\d\.]*)$/) {
         $Kernel = $1; next;
     } 
-    if($line =~/^(.*)Time: ([\d\.]*)$/) {
-        $Time=$1; next OUTTER;
+    if($line =~/^tlc: ([\d\.]*)$/) {
+        $tlc=$1; next;
     } 
-    if($line =~/^	 GFLOPS: ([\d\.]*)$/) {
+    if($line =~/^GFLOPS: ([\d\.]*)$/) {
         $Gflops=$1; 
-        print "$size, $Kernel, $Time, $Gflops\n";
+        print "$size, $Kernel, $tlc, $Gflops\n";
         next;
     }
 }
