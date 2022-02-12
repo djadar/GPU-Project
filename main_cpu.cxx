@@ -102,11 +102,15 @@ int main(int argc, char *argv[]) {
  // std::cout << " == Performances " << std::endl;
   std::cout << "Processing time: " << duration.count() << " (µs)"
             << std::endl;
+  std::cout << "flop: " << flop << std::endl;
+  std::cout << "ok: " << flop / duration.count() << std::endl;
   std::cout << "GFLOPS: " << flop / duration.count() / 1e+3 << std::endl;
 
   /*if (check_out)
     check_result<REAL>(A, B, C, M, N, K); // Res checking
 */
+  free(h_A);
+  free(h_K);
   free(h_C);
   /* End of the sequential program ------------------------------------------ */
   return (EXIT_SUCCESS);
