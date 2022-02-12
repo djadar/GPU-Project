@@ -102,8 +102,6 @@ int main(int argc, char *argv[]) {
  // std::cout << " == Performances " << std::endl;
   std::cout << "Processing time: " << duration.count() << " (µs)"
             << std::endl;
-  std::cout << "flop: " << flop << std::endl;
-  std::cout << "ok: " << flop / duration.count() << std::endl;
   std::cout << "GFLOPS: " << flop / duration.count() / 1e+3 << std::endl;
 
   /*if (check_out)
