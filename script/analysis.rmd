@@ -1,0 +1,39 @@
+---
+title: "Analysis"
+author: "Us"
+date: "12/02/2022"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+```{r}
+library(dplyr)
+df =read.csv(file = "data.csv")
+df
+```
+
+
+We want to show the evolution of time depending on the size and the kernel.
+
+```{r}
+plot(df$Size,df$Time)
+#col=c("red","blue","green")[df$Kernel])
+```
+
+
+```{r}
+library(ggplot2)
+p <- ggplot(df, aes(x = Size, y = Time)) + 
+  geom_point() 
+p + scale_y_log10()
+p + scale_y_continuous(trans = "log10")
+p + geom_line()
+```
+
+```{r}
+df %>% filter(df$Kernel = 3)
+df
